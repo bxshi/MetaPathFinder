@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cmath>
 #include <thread>
+#include <cstring>
 
 #define MAX_ID 13860000
 #define MAX_THREAD 1

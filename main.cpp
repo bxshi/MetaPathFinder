@@ -7,7 +7,7 @@
 #include <thread>
 
 #define MAX_ID 13860000
-#define MAX_THREAD 25
+#define MAX_THREAD 40
 
 using namespace std;
 
@@ -16,8 +16,7 @@ enum NodeType {
 };
 
 struct arg{
-  size_t start_pos;
-  size_t end_pos;
+  size_t partition;
   vector<NodeType> *nodeListPtr;
   vector<vector<uint32_t >> *edgeListPtr;
   size_t mpath_pos;
@@ -100,7 +99,7 @@ vector<vector<NodeType>> gen_metapath(uint32_t length, vector<NodeType>& candida
 
 
 void worker(struct arg &args) {
-  for (size_t i = args.start_pos; i < args.end_pos; ++i) {
+  for (size_t i = args.partition; i < nodeList.size(); i += args.partition) {
     try{
       if(nodeList[i] == metaPath[args.mpath_pos][0]) {
 //        auto start_time = chrono::high_resolution_clock::now();
@@ -219,12 +218,9 @@ int main() {
 
   for (size_t j = 0; j < metaPath.size(); j++) {
     start_time = chrono::high_resolution_clock::now();
-    cout << "j=" << j <<endl;
     size_t interval = nodeList.size() / MAX_THREAD;
     for(size_t i = 0; i < MAX_THREAD; i++) {
-      cout << "i = " << i << endl;
-      argList[i].start_pos = i * interval;
-      argList[i].end_pos = ((i+2) * interval > nodeList.size()) ? nodeList.size() : (i + 1) * interval;
+      argList[i].partition = i;
       argList[i].mpath_pos = j;
       argList[i].nodeListPtr = &nodeList;
       argList[i].edgeListPtr = &edgeList;

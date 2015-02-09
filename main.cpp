@@ -4,7 +4,6 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
-#include <Python/Python.h>
 
 #define MAX_ID 13860000
 

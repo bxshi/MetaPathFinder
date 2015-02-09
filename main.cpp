@@ -3,7 +3,6 @@
 #include <sstream>
 #include <vector>
 #include <cmath>
-#include <InputMethodKit/InputMethodKit.h>
 
 #define MAX_ID 13860000
 

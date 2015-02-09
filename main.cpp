@@ -217,7 +217,7 @@ int main() {
       args.mPathPtr = &metaPath[j];
       args.nodeListPtr = &nodeList;
       args.edgeListPtr = &edgeList;
-      thread t(worker, args);
+      thread t(worker, ref(args));
       threadList.push_back(&t);
     }
     for(size_t i = 0; i < 25; i++) {

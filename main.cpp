@@ -31,12 +31,12 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
         return frontier;
       }
       frontier.push_back(src);
-      cout << "i = 0 " << frontier.size() << " " << frontier[0] << endl;
+//      cout << "i = 0 " << frontier.size() << " " << frontier[0] << endl;
     }
     // Set frontier to visited
     for (size_t j = 0; j < frontier.size(); j++) {
       visited[frontier.at(j)] = true;
-      cout << "visited " << frontier.at(j) << " is " << visited[frontier.at(j)] << endl;
+//      cout << "visited " << frontier.at(j) << " is " << visited[frontier.at(j)] << endl;
     }
 
     // Get new frontier
@@ -180,14 +180,18 @@ int main() {
 
   for (int j = 0; j < metaPath.size(); ++j) {
     for (int i = 0; i < nodeList.size(); ++i) {
-      if(nodeList[i] == metaPath[j][0]) {
-        start_time = chrono::high_resolution_clock::now();
-        vector<uint32_t> res = bfs_lookup(nodeList[i], nodeList, edgeList, metaPath[j]);
-        if(res.size() > 0){
-          duration = chrono::high_resolution_clock::now() - start_time;
-          cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
-          cout << "size " << res.size() << endl;
+      try{
+        if(nodeList[i] == metaPath[j][0]) {
+          start_time = chrono::high_resolution_clock::now();
+          vector<uint32_t> res = bfs_lookup(i, nodeList, edgeList, metaPath[j]);
+          if(res.size() > 0){
+            duration = chrono::high_resolution_clock::now() - start_time;
+            cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+            cout << "size " << res.size() << endl;
+          }
         }
+      } catch (exception& e) {
+
       }
     }
     break;

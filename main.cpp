@@ -262,7 +262,7 @@ int main() {
       }
 
       uint32_t node1 = uint32_t(atoi(line.substr(0, pos - 1).c_str()));
-      uint32_t node2 = uint32_t(atoi(line.substr(0, pos + 1).c_str()));
+      uint32_t node2 = uint32_t(atoi(line.substr(pos + 1, line.size()).c_str()));
       edgeList[node1].push_back(node2);
       edgeList[node2].push_back(node1);
 //      cout << node1 << "->" << node2 << endl;

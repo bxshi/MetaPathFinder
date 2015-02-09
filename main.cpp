@@ -22,7 +22,7 @@ int main() {
 
   // Load author id
   {
-    std::ifstream authors("/data/bshi/dblp/article_id.csv");
+    std::ifstream authors("/data/bshi/dblp/author_id.csv");
     string line;
     while (getline(authors, line)) {
       size_t pos = 0;

@@ -69,6 +69,7 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
       try{
         vector<uint32_t> &tmpList = edgeDict.at(frontier.at(j));
         for (size_t z = 0; z < tmpList.size(); z++) { // for each element in next node
+          cout << "ind " << z << " candidate " << tmpList.at(z) << " cond1 " << bool(nodeDict.at(tmpList.at(z)) == nextType) << " cond2 " << bool(!visited.at(tmpList.at(z))) << endl;
           if (nodeDict.at(tmpList.at(z)) == nextType && // type meet
               !visited.at(tmpList.at(z))) { // never visited
             newFrontier.push_back(tmpList.at(z));

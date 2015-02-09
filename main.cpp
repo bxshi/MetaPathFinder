@@ -32,7 +32,7 @@ int main() {
           break;
         }
       }
-      cout << line;
+      cout << line.substr(1, pos) << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Author;
     }
   }
@@ -49,7 +49,7 @@ int main() {
           break;
         }
       }
-      cout << line;
+      cout << line.substr(1, pos) << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Paper;
     }
   }
@@ -66,7 +66,7 @@ int main() {
           break;
         }
       }
-      cout << line;
+      cout << line.substr(1, pos) << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Venue;
     }
   }

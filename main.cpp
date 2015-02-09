@@ -192,7 +192,7 @@ void worker(struct arg &args) {
 
 bool skip_metapath(vector<NodeType>& mPath) {
 
-  if(mPath[0] != Paper && mPath[mPath.size()-1] != Paper) {
+  if(mPath[0] != Paper || mPath[mPath.size()-1] != Paper) {
     return true;
   }
 

@@ -9,7 +9,7 @@
 
 #define MAX_ID 13860000
 #define MAX_THREAD 40
-#define PORTION 1
+#define PORTION 0.5
 
 using namespace std;
 
@@ -84,7 +84,7 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
 vector<vector<NodeType>> gen_metapath(uint32_t length, vector<NodeType>& candidates) {
   vector<vector<NodeType>> mPath;
   uint cnt = 0;
-  for(size_t path_len = 2; path_len <= length; path_len++) {
+  for(size_t path_len = 3; path_len <= length; path_len++) {
     for(size_t pos = 0; pos < pow(candidates.size(), path_len); pos++) {
       size_t val = pos;
       vector<NodeType> tmpPath;

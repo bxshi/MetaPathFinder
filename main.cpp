@@ -40,13 +40,16 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
     // Get new frontier
     vector<uint32_t> newFrontier;
     for (size_t j = 0; j < frontier.size(); j++) {
-      vector<uint32_t> &tmpList = edgeDict.at(frontier.at(j));
-      for (size_t z = 0; z < tmpList.size(); z++) { // for each element in next node
-        if (nodeDict.at(tmpList.at(z)) == nextType && // type meet
-            !visited.at(tmpList.at(z))) { // never visited
-          newFrontier.push_back(tmpList.at(z));
+        cout << j << " ";
+        cout << frontier.at(j) << " ";
+        cout << &edgeDict.at(frontier.at(j)) << endl;
+        vector<uint32_t> &tmpList = edgeDict.at(frontier.at(j));
+        for (size_t z = 0; z < tmpList.size(); z++) { // for each element in next node
+          if (nodeDict.at(tmpList.at(z)) == nextType && // type meet
+              !visited.at(tmpList.at(z))) { // never visited
+            newFrontier.push_back(tmpList.at(z));
+          }
         }
-      }
     }
     frontier = newFrontier;
   }

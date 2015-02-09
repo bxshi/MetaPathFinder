@@ -9,7 +9,7 @@
 
 #define MAX_ID 13860000
 #define MAX_THREAD 40
-#define PORTION 0.005
+#define PORTION 1
 
 using namespace std;
 

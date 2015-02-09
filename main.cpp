@@ -100,7 +100,7 @@ void worker(struct arg &args) {
   cout <<"aloha"<<endl;
   for (size_t i = args.start_pos; i < args.end_pos; ++i) {
     try{
-      if(nodeList[i] == metaPath[args.mpath_pos][0]) {
+      if(nodeList[15552] == metaPath[args.mpath_pos][0]) {
         auto start_time = chrono::high_resolution_clock::now();
         vector<uint32_t> res = bfs_lookup(i, *args.nodeListPtr, *args.edgeListPtr, metaPath[args.mpath_pos]);
         if(res.size() > 0){

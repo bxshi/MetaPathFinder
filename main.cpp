@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <chrono>
 #include <cmath>
 
 #define MAX_ID 13860000
@@ -14,7 +15,7 @@ enum NodeType {
   Author = 1, Paper = 2, Venue = 3, Term = 4, None = 0
 };
 
-vector<NodeType> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vector<uint32_t>> &edgeDict, vector<NodeType> &mPath) {
+vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vector<uint32_t>> &edgeDict, vector<NodeType> &mPath) {
 
   vector<uint32_t> frontier;
   vector<bool> visited;

@@ -31,10 +31,12 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
         return frontier;
       }
       frontier.push_back(src);
+      cout << "i = 0 " << frontier.size() << " " << frontier[0] << endl;
     }
     // Set frontier to visited
     for (size_t j = 0; j < frontier.size(); j++) {
       visited[frontier.at(j)] = true;
+      cout << "visited " << frontier.at(j) << " is " << visited[frontier.at(j)] << endl;
     }
 
     // Get new frontier
@@ -52,6 +54,7 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
           }
         }
       } catch(const exception& e) {
+        cout << e.what() << endl;
       }
 
     }

@@ -151,8 +151,7 @@ void worker(struct arg &args) {
           log_cnt++;
           if(log_cnt % 5000) {
             output << buf.str();
-            ostringstream nbuf;
-            buf = nbuf;
+            buf.flush();
           }
         }
       }

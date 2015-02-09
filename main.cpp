@@ -278,7 +278,7 @@ int main() {
   cand.push_back(NodeType::Author);
   cand.push_back(NodeType::Venue);
   cout << cand.size() << endl;
-  metaPath = gen_metapath(2, 2, cand);
+  metaPath = gen_metapath(3, 6, cand);
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 

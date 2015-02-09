@@ -185,9 +185,11 @@ int main() {
       if(nodeList[i] == metaPath[j][0]) {
         start_time = chrono::high_resolution_clock::now();
         vector<uint32_t> res = bfs_lookup(nodeList[i], nodeList, edgeList, metaPath[j]);
-        duration = chrono::high_resolution_clock::now() - start_time;
-        cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
-        cout << "size " << res.size() << endl;
+        if(res.size() > 0){
+          duration = chrono::high_resolution_clock::now() - start_time;
+          cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
+          cout << "size " << res.size() << endl;
+        }
       }
     }
     break;

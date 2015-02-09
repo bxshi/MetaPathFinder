@@ -9,7 +9,7 @@
 
 #define MAX_ID 13860000
 #define MAX_THREAD 40
-#define PORTION 0.01
+#define PORTION 0.005
 
 using namespace std;
 
@@ -66,6 +66,7 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
           if (nodeDict.at(tmpList.at(z)) == nextType && // type meet
               !visited.at(tmpList.at(z))) { // never visited
             newFrontier.push_back(tmpList.at(z));
+            visited[tmpList.at(z)] = true; // set as visited to avoid duplicate dest
           }
         }
       } catch(const exception& e) {

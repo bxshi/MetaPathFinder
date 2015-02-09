@@ -166,6 +166,7 @@ int main() {
 
   auto duration = chrono::high_resolution_clock::now() - start_time;
   cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
+  cout << "edge nodes " << edgeList.size();
 
   vector<NodeType> cand;
   cand.push_back(NodeType::Paper);

@@ -178,7 +178,7 @@ int main() {
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 
-  for (int j = 0; j < metaPath.size(); ++j) {
+  for (int j = metaPath.size() - 1; j >=0; --j) {
     for (int i = 0; i < nodeList.size(); ++i) {
       try{
         if(nodeList[i] == metaPath[j][0]) {

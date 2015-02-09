@@ -100,7 +100,6 @@ vector<vector<NodeType>> gen_metapath(uint32_t length, vector<NodeType>& candida
 
 
 void worker(struct arg &args) {
-  cout <<"aloha"<<endl;
   for (size_t i = args.start_pos; i < args.end_pos; ++i) {
     try{
       if(nodeList[i] == metaPath[args.mpath_pos][0]) {
@@ -214,13 +213,11 @@ int main() {
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 
-  cout << "15552 " << nodeList[15552];
-
 //  struct arg args;
 //  thread t(worker, ref(args));
 //  t.join();
 
-  for (int j = metaPath.size() - 1; j >=0; --j) {
+  for (size_t j = 0; j < metaPath.size(); j++) {
     cout << "j=" << j <<endl;
     size_t interval = nodeList.size() / 25;
     for(size_t i = 0; i < 25; i++) {

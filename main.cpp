@@ -48,6 +48,11 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
       frontier.push_back(src);
 //      cout << "i = 0 " << frontier.size() << " " << frontier[0] << endl;
     }
+
+    if(frontier.size() == 0) { // early terminate if there is no nodes to visit
+      return frontier;
+    }
+
     // Set frontier to visited
     for (size_t j = 0; j < frontier.size(); j++) {
       visited[frontier.at(j)] = true;

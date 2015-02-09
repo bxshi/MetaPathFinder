@@ -1,10 +1,13 @@
 #include <iostream>
 #include <fstream>
+#include <ostream>
 #include <sstream>
 #include <vector>
 #include <chrono>
 #include <cmath>
 #include <thread>
+#include <Foundation/Foundation.h>
+#include <Automator/Automator.h>
 
 #define MAX_ID 13860000
 #define MAX_THREAD 40
@@ -99,6 +102,32 @@ vector<vector<NodeType>> gen_metapath(uint32_t length, vector<NodeType>& candida
 
 
 void worker(struct arg &args) {
+
+  ostringstream filename;
+  filename << "./result_";
+  for(size_t i = 0; i < metaPath[args.mpath_pos]; i++) {
+    switch(metaPath[args.mpath_pos][i]) {
+      case NodeType::None:
+        filename << "None_";
+        break;
+      case NodeType::Author:
+        filename << "Author_";
+        break;
+      case NodeType::Paper:
+        filename << "Paper_";
+        break;
+      case NodeType::Venue:
+        filename << "Venue_";
+        break;
+      case NodeType::Term:
+        filename << "Term_";
+    }
+  }
+  filename << args.partition;
+
+  ofstream output;
+  output.open(filename.str(), ofstream::trunc);
+
   for (size_t i = args.partition; i < nodeList.size(); i += MAX_THREAD) {
     try{
       if(nodeList[i] == metaPath[args.mpath_pos][0]) {
@@ -109,11 +138,24 @@ void worker(struct arg &args) {
 //          cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
 //          cout << "size " << res.size() << endl;
 //        }
+        if(res.size() > 0) {
+          ostringstream buf;
+          buf << i << " ";
+          for (int j = 0; j < res.size(); ++j) {
+            buf << res[j];
+            if(j < res.size() - 1)
+              buf << " ";
+          }
+          output << buf.str();
+        }
       }
     } catch (exception& e) {
 
     }
   }
+
+  output.close();
+
 }
 
 

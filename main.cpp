@@ -99,7 +99,7 @@ vector<vector<NodeType>> gen_metapath(uint32_t length, vector<NodeType>& candida
 
 
 void worker(struct arg &args) {
-  for (size_t i = args.partition; i < nodeList.size(); i += args.partition) {
+  for (size_t i = args.partition; i < nodeList.size(); i += MAX_THREAD) {
     try{
       if(nodeList[i] == metaPath[args.mpath_pos][0]) {
 //        auto start_time = chrono::high_resolution_clock::now();
@@ -218,7 +218,6 @@ int main() {
 
   for (size_t j = 0; j < metaPath.size(); j++) {
     start_time = chrono::high_resolution_clock::now();
-    size_t interval = nodeList.size() / MAX_THREAD;
     for(size_t i = 0; i < MAX_THREAD; i++) {
       argList[i].partition = i;
       argList[i].mpath_pos = j;

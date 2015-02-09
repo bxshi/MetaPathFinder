@@ -32,6 +32,7 @@ int main() {
           break;
         }
       }
+      cout << 1 << " " << pos << " " << line.substr(1, pos) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Author;
     }
   }
@@ -48,6 +49,7 @@ int main() {
           break;
         }
       }
+      cout << 1 << " " << pos << " " << line.substr(1, pos) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Paper;
     }
   }
@@ -64,6 +66,7 @@ int main() {
           break;
         }
       }
+      cout << 1 << " " << pos << " " << line.substr(1, pos) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Venue;
     }
   }
@@ -72,6 +75,6 @@ int main() {
   cout << "Node types are loaded, took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
 
 
-  cout << "Hello, World!" << endl;
+  cout << "Hello, World!" << "\"123\""[0] << endl;
   return 0;
 }

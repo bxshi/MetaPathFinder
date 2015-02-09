@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
+#include <Python/Python.h>
 
 #define MAX_ID 13860000
 
@@ -61,10 +62,13 @@ vector<vector<NodeType>> gen_metapath(uint32_t length, vector<NodeType>& candida
   for(size_t path_len = 2; path_len <= length; path_len++) {
     for(size_t pos = 0; pos < pow(candidates.size(), path_len); pos++) {
       size_t val = pos;
+      vector<NodeType> tmpPath;
       for(size_t j = 0; j < path_len; j++) {
-        mPath[cnt].push_back(candidates[val % candidates.size()]);
+        tmpPath.push_back(candidates[val % candidates.size()]);
         val = val / candidates.size();
       }
+      mPath.push_back(tmpPath);
+      cnt++;
     }
   }
   return mPath;
@@ -151,16 +155,36 @@ int main() {
     }
   }
 
-  auto duration = start_time - chrono::high_resolution_clock::now();
-  cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+  auto duration = chrono::high_resolution_clock::now() - start_time;
+  cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
 
   vector<NodeType> cand;
   cand.push_back(NodeType::Author);
   cand.push_back(NodeType::Paper);
   cand.push_back(NodeType::Venue);
+  cout << cand.size() << endl;
   vector<vector<NodeType>> metaPath = gen_metapath(6, cand);
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
+
+//  for (int j = 0; j < metaPath.size(); ++j) {
+//    for (int i = 0; i < metaPath[j].size(); ++i) {
+//      cout << metaPath[j][i] << "->";
+//    }
+//    cout << endl;
+//  }
+
+  for (int j = 0; j < metaPath.size(); ++j) {
+    for (int i = 0; i < nodeList.size(); ++i) {
+      start_time = chrono::high_resolution_clock::now();
+      vector<uint32_t> res = bfs_lookup(nodeList[i], nodeList, edgeList, metaPath[j]);
+      duration = chrono::high_resolution_clock::now() - start_time;
+      cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
+      cout << "size " << res.size() << endl;
+      break;
+    }
+    break;
+  }
 
   cout << "Hello, World!" << endl;
   return 0;

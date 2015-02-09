@@ -8,7 +8,7 @@
 #include <thread>
 
 #define MAX_ID 13860000
-#define MAX_THREAD 40
+#define MAX_THREAD 1
 #define PORTION 1
 
 using namespace std;
@@ -30,11 +30,9 @@ vector<vector<uint32_t>> edgeList;
 thread threadList[MAX_THREAD];
 struct arg argList[MAX_THREAD];
 
-vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vector<uint32_t>> &edgeDict, vector<NodeType> &mPath) {
-
+vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict,
+    vector<vector<uint32_t>> &edgeDict, vector<NodeType> &mPath, bool *visited) {
   vector<uint32_t> frontier;
-  vector<bool> visited;
-  visited.resize(MAX_ID, false);
 
   for (size_t i = 0; i < mPath.size() - 1; i++) {
     NodeType currentType = mPath.at(i);
@@ -46,7 +44,7 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
         return frontier;
       }
       frontier.push_back(src);
-      visited[src] =true;
+      visited[src] = true;
 //      cout << "i = 0 " << frontier.size() << " fronter " << frontier[0] << endl;
     }
 
@@ -71,7 +69,7 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
         for (size_t z = 0; z < tmpList.size(); z++) { // for each element in next node
 //          cout << "ind " << z << " candidate " << tmpList.at(z) << " cond1 " << bool(nodeDict.at(tmpList.at(z)) == nextType) << " cond2 " << bool(!visited.at(tmpList.at(z))) << endl;
           if (nodeDict.at(tmpList.at(z)) == nextType && // type meet
-              !visited.at(tmpList.at(z))) { // never visited
+              !visited[tmpList[z]]) { // never visited
             newFrontier.push_back(tmpList.at(z));
             visited[tmpList.at(z)] = true; // set as visited to avoid duplicate dest
           }
@@ -134,20 +132,27 @@ string path_to_string(vector<NodeType>& nodevec) {
 
 void worker(struct arg &args) {
 
+
   ostringstream filename;
   filename << "./result_";
   filename << path_to_string(metaPath[args.mpath_pos]);
+
   filename << args.partition;
+  cout << args.partition << endl;
 
   ofstream output;
   output.open(filename.str(), ofstream::trunc);
   ostringstream buf;
   size_t log_cnt= 0;
+
+
+  bool *is_visited = (bool *)malloc(MAX_ID * sizeof(bool));
+  memset(is_visited, false, sizeof(bool) * MAX_ID);
   for (size_t i = args.partition; i < nodeList.size(); i += MAX_THREAD) {
     try{
       if(nodeList[i] == metaPath[args.mpath_pos][0] && ((double)rand() / (double)RAND_MAX) <= PORTION) {
 //        auto start_time = chrono::high_resolution_clock::now();
-        vector<uint32_t> res = bfs_lookup(i, *args.nodeListPtr, *args.edgeListPtr, metaPath[args.mpath_pos]);
+        vector<uint32_t> res = bfs_lookup(i, *args.nodeListPtr, *args.edgeListPtr, metaPath[args.mpath_pos], is_visited);
 //        if(res.size() > 0){
 //          auto duration = chrono::high_resolution_clock::now() - start_time;
 //          cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
@@ -207,7 +212,12 @@ bool skip_metapath(vector<NodeType>& mPath) {
 }
 
 
-int main() {
+int main(int args, char** argv) {
+
+  if(args != 3) {
+    cout << "Usage: ./MetaPathFinder metaPathMinLen metaPathMaxLen\n";
+    return 233;
+  }
 
   srand(900207);
 
@@ -298,7 +308,7 @@ int main() {
   cand.push_back(NodeType::Author);
   cand.push_back(NodeType::Venue);
   cout << cand.size() << endl;
-  metaPath = gen_metapath(4, 6, cand);
+  metaPath = gen_metapath(atoi(argv[1]), atoi(argv[2]), cand);
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 

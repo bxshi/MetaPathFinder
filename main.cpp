@@ -289,7 +289,7 @@ int main() {
     oss << vvv[i] << " ";
   }
   oss << endl;
-  cout << oss;
+  cout << oss.str();
 
 
 //    for(int j = metaPath.size() - 1; j >= 0; j--) {

@@ -105,29 +105,34 @@ vector<vector<NodeType>> gen_metapath(uint32_t min_length, uint32_t length, vect
   return mPath;
 }
 
+string path_to_string(vector<NodeType>& nodevec) {
+  ostringstream ostr;
+  for(size_t i = 0; i < nodevec.size(); i++) {
+    switch(nodevec[i]) {
+      case NodeType::None:
+        ostr << "None_";
+        break;
+      case NodeType::Author:
+        ostr << "Author_";
+        break;
+      case NodeType::Paper:
+        ostr << "Paper_";
+        break;
+      case NodeType::Venue:
+        ostr << "Venue_";
+        break;
+      case NodeType::Term:
+        ostr << "Term_";
+    }
+  }
+  return ostr.str();
+}
 
 void worker(struct arg &args) {
 
   ostringstream filename;
   filename << "./result_";
-  for(size_t i = 0; i < metaPath[args.mpath_pos].size(); i++) {
-    switch(metaPath[args.mpath_pos][i]) {
-      case NodeType::None:
-        filename << "None_";
-        break;
-      case NodeType::Author:
-        filename << "Author_";
-        break;
-      case NodeType::Paper:
-        filename << "Paper_";
-        break;
-      case NodeType::Venue:
-        filename << "Venue_";
-        break;
-      case NodeType::Term:
-        filename << "Term_";
-    }
-  }
+  filename << path_to_string(metaPath[args.mpath_pos]);
   filename << args.partition;
 
   ofstream output;
@@ -277,6 +282,7 @@ int main() {
     for(int j = metaPath.size() - 1; j >= 0; j--) {
 //  for (size_t j = 0; j < metaPath.size(); j++) {
     if(metaPath[j][0] == NodeType::Paper && metaPath[j][metaPath[j].size()-1] == NodeType::Paper){
+      cout << "start computing " << path_to_string(metaPath[j]) << endl;
       start_time = chrono::high_resolution_clock::now();
       for(size_t i = 0; i < MAX_THREAD; i++) {
         argList[i].partition = i;

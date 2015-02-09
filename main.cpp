@@ -91,7 +91,7 @@ int main() {
   nodeList.resize(MAX_ID);
 
   vector<vector<uint32_t>> edgeList;
-  edgeList.reserve(MAX_ID);
+  edgeList.resize(MAX_ID);
 
   // Load author id
   {
@@ -161,6 +161,7 @@ int main() {
       uint32_t node2 = uint32_t(atoi(line.substr(0, pos + 1).c_str()));
       edgeList[node1].push_back(node2);
       edgeList[node2].push_back(node1);
+      cout << node1 << "->" << node2 << endl;
     }
   }
 

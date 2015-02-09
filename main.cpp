@@ -179,6 +179,11 @@ int main() {
 //    }
 //    cout << endl;
 //  }
+  vector<NodeType> vvv;
+  vvv.push_back(NodeType::Paper);
+  vvv.push_back(NodeType::Paper);
+  vector<uint32_t> rrr = bfs_lookup(3104906, nodeList, edgeList, vvv);
+  cout << "size " << rrr.size() << endl;
 
   for (int j = 0; j < metaPath.size(); ++j) {
     for (int i = 0; i < nodeList.size(); ++i) {

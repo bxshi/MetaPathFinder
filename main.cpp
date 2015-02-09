@@ -158,8 +158,8 @@ int main() {
   cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
 
   vector<NodeType> cand;
-  cand.push_back(NodeType::Author);
   cand.push_back(NodeType::Paper);
+  cand.push_back(NodeType::Author);
   cand.push_back(NodeType::Venue);
   cout << cand.size() << endl;
   vector<vector<NodeType>> metaPath = gen_metapath(6, cand);

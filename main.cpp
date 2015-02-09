@@ -47,7 +47,7 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
       }
       frontier.push_back(src);
       visited[src] =true;
-//      cout << "i = 0 " << frontier.size() << " " << frontier[0] << endl;
+      cout << "i = 0 " << frontier.size() << " fronter " << frontier[0] << endl;
     }
 
     if(frontier.size() == 0) { // early terminate if there is no nodes to visit
@@ -63,9 +63,9 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
     // Get new frontier
     vector<uint32_t> newFrontier;
     for (size_t j = 0; j < frontier.size(); j++) {
-//        cout << j << " ";
-//        cout << frontier.at(j) << " ";
-//        cout << &edgeDict.at(frontier.at(j)) << endl;
+        cout << j << " ";
+        cout << frontier.at(j) << " ";
+        cout << edgeDict.at(frontier.at(j)).size() << endl;
       try{
         vector<uint32_t> &tmpList = edgeDict.at(frontier.at(j));
         for (size_t z = 0; z < tmpList.size(); z++) { // for each element in next node
@@ -81,6 +81,9 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
 
     }
     frontier = newFrontier;
+    for (int k = 0; k < frontier.size(); ++k) {
+      cout << "new frontier " << k << " " << frontier[k] << endl;
+    }
   }
 
   return frontier;

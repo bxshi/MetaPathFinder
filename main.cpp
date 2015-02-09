@@ -163,7 +163,8 @@ void worker(struct arg &args) {
           log_cnt++;
           if(log_cnt % 5000) {
             output << buf.str();
-            buf.flush();
+            buf.str("");
+            buf.clear();
           }
         }
       }
@@ -173,7 +174,8 @@ void worker(struct arg &args) {
   }
 
   output << buf.str();
-
+  buf.str("");
+  buf.clear();
   output.close();
 
 }

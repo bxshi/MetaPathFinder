@@ -125,7 +125,7 @@ void worker(struct arg &args) {
 
   ofstream output;
   output.open(filename.str(), ofstream::trunc);
-
+  ostringstream buf;
   for (size_t i = args.partition; i < nodeList.size(); i += MAX_THREAD) {
     try{
       if(nodeList[i] == metaPath[args.mpath_pos][0]) {
@@ -137,20 +137,21 @@ void worker(struct arg &args) {
 //          cout << "size " << res.size() << endl;
 //        }
         if(res.size() > 0) {
-          ostringstream buf;
           buf << i << " ";
           for (int j = 0; j < res.size(); ++j) {
             buf << res[j];
             if(j < res.size() - 1)
               buf << " ";
           }
-          output << buf.str();
+          buf << "\n";
         }
       }
     } catch (exception& e) {
 
     }
   }
+
+  output << buf.str();
 
   output.close();
 

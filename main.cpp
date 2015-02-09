@@ -35,6 +35,8 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict,
     vector<vector<uint32_t>> &edgeDict, vector<NodeType> &mPath, bool *visited) {
   vector<uint32_t> frontier;
 
+  memset(visited, false, sizeof(bool) * MAX_ID);
+
   for (size_t i = 0; i < mPath.size() - 1; i++) {
     NodeType currentType = mPath.at(i);
     NodeType nextType = mPath.at(i + 1);

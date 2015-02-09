@@ -9,7 +9,7 @@
 #include <cstring>
 
 #define MAX_ID 13860000
-#define MAX_THREAD 1
+#define MAX_THREAD 40
 #define PORTION 1
 
 using namespace std;

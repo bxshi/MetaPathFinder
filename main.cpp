@@ -43,6 +43,7 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
         cout << j << " ";
         cout << frontier.at(j) << " ";
         cout << &edgeDict.at(frontier.at(j)) << endl;
+      try{
         vector<uint32_t> &tmpList = edgeDict.at(frontier.at(j));
         for (size_t z = 0; z < tmpList.size(); z++) { // for each element in next node
           if (nodeDict.at(tmpList.at(z)) == nextType && // type meet
@@ -50,6 +51,9 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
             newFrontier.push_back(tmpList.at(z));
           }
         }
+      } catch(const exception& e) {
+      }
+
     }
     frontier = newFrontier;
   }
@@ -184,7 +188,6 @@ int main() {
         duration = chrono::high_resolution_clock::now() - start_time;
         cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
         cout << "size " << res.size() << endl;
-        break;
       }
     }
     break;

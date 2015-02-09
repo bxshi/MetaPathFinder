@@ -32,7 +32,7 @@ int main() {
           break;
         }
       }
-      cout << 1 << " " << pos << " " << line.substr(1, pos) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
+      cout << 1 << " " << pos << " " << atoi(line.substr(1, pos).c_str()) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Author;
     }
   }
@@ -49,7 +49,7 @@ int main() {
           break;
         }
       }
-      cout << 1 << " " << pos << " " << line.substr(1, pos) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
+      cout << 1 << " " << pos << " " << atoi(line.substr(1, pos).c_str()) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Paper;
     }
   }
@@ -66,7 +66,7 @@ int main() {
           break;
         }
       }
-      cout << 1 << " " << pos << " " << line.substr(1, pos) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
+      cout << 1 << " " << pos << " " << atoi(line.substr(1, pos).c_str()) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Venue;
     }
   }

@@ -166,7 +166,7 @@ int main() {
   }
 
   auto duration = chrono::high_resolution_clock::now() - start_time;
-  cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
+  cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
   cout << "edge nodes " << edgeList.size();
 
   vector<NodeType> cand;
@@ -178,32 +178,20 @@ int main() {
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 
-//  for (int j = 0; j < metaPath.size(); ++j) {
-//    for (int i = 0; i < metaPath[j].size(); ++i) {
-//      cout << metaPath[j][i] << "->";
-//    }
-//    cout << endl;
-//  }
-  vector<NodeType> vvv;
-  vvv.push_back(NodeType::Paper);
-  vvv.push_back(NodeType::Paper);
-  vector<uint32_t> rrr = bfs_lookup(3104906, nodeList, edgeList, vvv);
-  cout << "size " << rrr.size() << endl;
-
-//  for (int j = 0; j < metaPath.size(); ++j) {
-//    for (int i = 0; i < nodeList.size(); ++i) {
-//      if(nodeList[i] == metaPath[j][0]) {
-//        start_time = chrono::high_resolution_clock::now();
-//        vector<uint32_t> res = bfs_lookup(nodeList[i], nodeList, edgeList, metaPath[j]);
-//        if(res.size() > 0){
-//          duration = chrono::high_resolution_clock::now() - start_time;
-//          cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
-//          cout << "size " << res.size() << endl;
-//        }
-//      }
-//    }
-//    break;
-//  }
+  for (int j = 0; j < metaPath.size(); ++j) {
+    for (int i = 0; i < nodeList.size(); ++i) {
+      if(nodeList[i] == metaPath[j][0]) {
+        start_time = chrono::high_resolution_clock::now();
+        vector<uint32_t> res = bfs_lookup(nodeList[i], nodeList, edgeList, metaPath[j]);
+        if(res.size() > 0){
+          duration = chrono::high_resolution_clock::now() - start_time;
+          cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::milliseconds>(duration).count() << endl;
+          cout << "size " << res.size() << endl;
+        }
+      }
+    }
+    break;
+  }
 
   cout << "Hello, World!" << endl;
   return 0;

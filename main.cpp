@@ -282,41 +282,40 @@ int main() {
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 
-
-  vector<NodeType> ttt;
-  ttt.push_back(NodeType::Paper);
-  ttt.push_back(NodeType::Paper);
-
-  vector<uint32_t> vvv = bfs_lookup(3104898, nodeList, edgeList, ttt);
-  ostringstream oss;
-  for(size_t i = 0; i < vvv.size(); i++) {
-    oss << vvv[i] << " ";
-  }
-  oss << endl;
-  cout << oss.str();
+//  vector<NodeType> ttt;
+//  ttt.push_back(NodeType::Paper);
+//  ttt.push_back(NodeType::Paper);
+//
+//  vector<uint32_t> vvv = bfs_lookup(3104898, nodeList, edgeList, ttt);
+//  ostringstream oss;
+//  for(size_t i = 0; i < vvv.size(); i++) {
+//    oss << vvv[i] << " ";
+//  }
+//  oss << endl;
+//  cout << oss.str();
 
 
 //    for(int j = metaPath.size() - 1; j >= 0; j--) {
-////  for (size_t j = 0; j < metaPath.size(); j++) {
-//    if(metaPath[j][0] == NodeType::Paper && metaPath[j][metaPath[j].size()-1] == NodeType::Paper){
-//      cout << "start computing " << path_to_string(metaPath[j]) << endl;
-//      start_time = chrono::high_resolution_clock::now();
-//      for(size_t i = 0; i < MAX_THREAD; i++) {
-//        argList[i].partition = i;
-//        argList[i].mpath_pos = j;
-//        argList[i].nodeListPtr = &nodeList;
-//        argList[i].edgeListPtr = &edgeList;
-//        threadList[i] = thread(worker, ref(argList[i]));
-//      }
-//
-//      for(size_t i = 0; i < MAX_THREAD; i++) {
-//        threadList[i].join();
-//      }
-//
-//      duration = chrono::high_resolution_clock::now() - start_time;
-//      cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
-//    }
-//  }
+  for (size_t j = 0; j < metaPath.size(); j++) {
+    if(metaPath[j][0] == NodeType::Paper && metaPath[j][metaPath[j].size()-1] == NodeType::Paper){
+      cout << "start computing " << path_to_string(metaPath[j]) << endl;
+      start_time = chrono::high_resolution_clock::now();
+      for(size_t i = 0; i < MAX_THREAD; i++) {
+        argList[i].partition = i;
+        argList[i].mpath_pos = j;
+        argList[i].nodeListPtr = &nodeList;
+        argList[i].edgeListPtr = &edgeList;
+        threadList[i] = thread(worker, ref(argList[i]));
+      }
+
+      for(size_t i = 0; i < MAX_THREAD; i++) {
+        threadList[i].join();
+      }
+
+      duration = chrono::high_resolution_clock::now() - start_time;
+      cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+    }
+  }
 
 //  for (int j = metaPath.size() - 1; j >=0; --j) {
 //    cout << "j=" << j <<endl;

@@ -46,6 +46,7 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
         return frontier;
       }
       frontier.push_back(src);
+      visited[src] =true;
 //      cout << "i = 0 " << frontier.size() << " " << frontier[0] << endl;
     }
 
@@ -54,10 +55,10 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
     }
 
     // Set frontier to visited
-    for (size_t j = 0; j < frontier.size(); j++) {
-      visited[frontier.at(j)] = true;
-//      cout << "visited " << frontier.at(j) << " is " << visited[frontier.at(j)] << endl;
-    }
+//    for (size_t j = 0; j < frontier.size(); j++) {
+//      visited[frontier.at(j)] = true;
+////      cout << "visited " << frontier.at(j) << " is " << visited[frontier.at(j)] << endl;
+//    }
 
     // Get new frontier
     vector<uint32_t> newFrontier;
@@ -86,10 +87,10 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vec
 
 }
 
-vector<vector<NodeType>> gen_metapath(uint32_t length, vector<NodeType>& candidates) {
+vector<vector<NodeType>> gen_metapath(uint32_t min_length, uint32_t length, vector<NodeType>& candidates) {
   vector<vector<NodeType>> mPath;
   uint cnt = 0;
-  for(size_t path_len = 3; path_len <= length; path_len++) {
+  for(size_t path_len = min_length; path_len <= length; path_len++) {
     for(size_t pos = 0; pos < pow(candidates.size(), path_len); pos++) {
       size_t val = pos;
       vector<NodeType> tmpPath;
@@ -266,7 +267,7 @@ int main() {
   cand.push_back(NodeType::Author);
   cand.push_back(NodeType::Venue);
   cout << cand.size() << endl;
-  metaPath = gen_metapath(6, cand);
+  metaPath = gen_metapath(2, 2, cand);
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 

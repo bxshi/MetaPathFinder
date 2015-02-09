@@ -103,7 +103,7 @@ void worker(struct arg &args) {
 
   ostringstream filename;
   filename << "./result_";
-  for(size_t i = 0; i < metaPath[args.mpath_pos]; i++) {
+  for(size_t i = 0; i < metaPath[args.mpath_pos].size(); i++) {
     switch(metaPath[args.mpath_pos][i]) {
       case NodeType::None:
         filename << "None_";

@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
+#include <thread>
 
 #define MAX_ID 13860000
 
@@ -81,6 +82,32 @@ vector<vector<NodeType>> gen_metapath(uint32_t length, vector<NodeType>& candida
     }
   }
   return mPath;
+}
+
+struct arg {
+  size_t start_pos;
+  size_t end_pos;
+  vector<NodeType> *nodeListPtr;
+  vector<vector<uint32_t >> *edgeListPtr;
+  vector<NodeType> *mPathPtr;
+};
+
+void worker(struct arg& args) {
+  for (int i = args.start_pos; i < args.end_pos; ++i) {
+    try{
+      if(args.nodeListPtr[i] == args.mPathPtr[0]) {
+        auto start_time = chrono::high_resolution_clock::now();
+        vector<uint32_t> res = bfs_lookup(i, *args.nodeListPtr, *args.edgeListPtr, *args.mPathPtr);
+        if(res.size() > 0){
+          auto duration = chrono::high_resolution_clock::now() - start_time;
+          cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+          cout << "size " << res.size() << endl;
+        }
+      }
+    } catch (exception& e) {
+
+    }
+  }
 }
 
 int main() {
@@ -178,24 +205,45 @@ int main() {
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 
+  vector<thread> threadList;
+
   for (int j = metaPath.size() - 1; j >=0; --j) {
     cout << "j=" << j <<endl;
-    for (int i = 0; i < nodeList.size(); ++i) {
-      try{
-        if(nodeList[i] == metaPath[j][0]) {
-          start_time = chrono::high_resolution_clock::now();
-          vector<uint32_t> res = bfs_lookup(i, nodeList, edgeList, metaPath[j]);
-          if(res.size() > 0){
-            duration = chrono::high_resolution_clock::now() - start_time;
-            cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
-            cout << "size " << res.size() << endl;
-          }
-        }
-      } catch (exception& e) {
-
-      }
+    size_t interval = nodeList.size() / 25;
+    for(size_t i = 0; i < 25; i++) {
+      struct arg args;
+      args.start_pos = i * interval;
+      args.end_pos = ((i+2) * interval > nodeList.size()) ? nodeList.size() : (i + 1) * interval;
+      args.mPathPtr = &metaPath[j];
+      args.nodeListPtr = &nodeList;
+      args.edgeListPtr = &edgeList;
+      threadList.push_back(thread(worker, args));
     }
+    for(size_t i = 0; i < 25; i++) {
+      threadList[i].join();
+    }
+
+    threadList.clear();
   }
+
+//  for (int j = metaPath.size() - 1; j >=0; --j) {
+//    cout << "j=" << j <<endl;
+//    for (int i = 0; i < nodeList.size(); ++i) {
+//      try{
+//        if(nodeList[i] == metaPath[j][0]) {
+//          start_time = chrono::high_resolution_clock::now();
+//          vector<uint32_t> res = bfs_lookup(i, nodeList, edgeList, metaPath[j]);
+//          if(res.size() > 0){
+//            duration = chrono::high_resolution_clock::now() - start_time;
+//            cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+//            cout << "size " << res.size() << endl;
+//          }
+//        }
+//      } catch (exception& e) {
+//
+//      }
+//    }
+//  }
 
   cout << "Hello, World!" << endl;
   return 0;

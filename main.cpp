@@ -184,7 +184,27 @@ void worker(struct arg &args) {
 
 }
 
+bool skip_metapath(vector<NodeType>& mPath) {
 
+  if(mPath[0] != Paper && mPath[mPath.size()-1] != Paper) {
+    return true;
+  }
+
+  for(size_t i = 0; i < mPath.size() - 1; i++) {
+    if (mPath[i] == Author) {
+      if ((mPath[i+1] == Author) || mPath[i+1] == Venue) {
+        return true;
+      }
+    }
+    if (mPath[i] == Venue) {
+      if ((mPath[i+1] == Venue) || (mPath[i+1] == Author)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
 
 
 int main() {
@@ -278,7 +298,7 @@ int main() {
   cand.push_back(NodeType::Author);
   cand.push_back(NodeType::Venue);
   cout << cand.size() << endl;
-  metaPath = gen_metapath(3, 6, cand);
+  metaPath = gen_metapath(4, 6, cand);
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 
@@ -297,7 +317,8 @@ int main() {
 
 //    for(int j = metaPath.size() - 1; j >= 0; j--) {
   for (size_t j = 0; j < metaPath.size(); j++) {
-    if(metaPath[j][0] == NodeType::Paper && metaPath[j][metaPath[j].size()-1] == NodeType::Paper){
+    if(!skip_metapath(metaPath[j])){
+//    if(metaPath[j][0] == NodeType::Paper && metaPath[j][metaPath[j].size()-1] == NodeType::Paper){
       cout << "start computing " << path_to_string(metaPath[j]) << endl;
       start_time = chrono::high_resolution_clock::now();
       for(size_t i = 0; i < MAX_THREAD; i++) {
@@ -314,6 +335,8 @@ int main() {
 
       duration = chrono::high_resolution_clock::now() - start_time;
       cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+    } else {
+      cout << "skip " << path_to_string(metaPath[j]) << endl;
     }
   }
 

@@ -205,7 +205,7 @@ int main() {
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 
-  vector<thread> threadList;
+  vector<thread*> threadList;
 
   for (int j = metaPath.size() - 1; j >=0; --j) {
     cout << "j=" << j <<endl;
@@ -217,10 +217,11 @@ int main() {
       args.mPathPtr = &metaPath[j];
       args.nodeListPtr = &nodeList;
       args.edgeListPtr = &edgeList;
-      threadList.push_back(thread(worker, args));
+      thread t(worker, args);
+      threadList.push_back(&t);
     }
     for(size_t i = 0; i < 25; i++) {
-      threadList[i].join();
+      threadList[i]->join();
     }
 
     threadList.clear();

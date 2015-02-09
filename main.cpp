@@ -9,7 +9,7 @@
 
 #define MAX_ID 13860000
 #define MAX_THREAD 40
-#define PORTION 0.5
+#define PORTION 1
 
 using namespace std;
 
@@ -268,8 +268,8 @@ int main() {
 //  struct arg args;
 //  thread t(worker, ref(args));
 //  t.join();
-
-  for (size_t j = 0; j < metaPath.size(); j++) {
+    for(int j = metaPath.size() - 1; j >= 0; j--) {
+//  for (size_t j = 0; j < metaPath.size(); j++) {
     if(metaPath[j][0] == NodeType::Paper && metaPath[j][metaPath[j].size()-1] == NodeType::Paper){
       start_time = chrono::high_resolution_clock::now();
       for(size_t i = 0; i < MAX_THREAD; i++) {

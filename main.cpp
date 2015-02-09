@@ -26,13 +26,12 @@ int main() {
     string line;
     while (getline(authors, line)) {
       size_t pos = 0;
-      for (int i = 2; i < line.size(); i++) {
-        if (line[pos] == '\"') {
+      for (int i = 1; i < line.size(); i++) {
+        if (line[i] == '\"') {
           pos = i - 1;
           break;
         }
       }
-      cout << 1 << " " << pos << " " << line.substr(1, pos) << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Author;
     }
   }
@@ -43,13 +42,12 @@ int main() {
     string line;
     while (getline(authors, line)) {
       size_t pos = 0;
-      for (int i = 2; i < line.size(); i++) {
-        if (line[pos] == '\"') {
+      for (int i = 1; i < line.size(); i++) {
+        if (line[i] == '\"') {
           pos = i - 1;
           break;
         }
       }
-      cout << 1 << " " << pos << " " << line.substr(1, pos) << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Paper;
     }
   }
@@ -60,13 +58,12 @@ int main() {
     string line;
     while (getline(authors, line)) {
       size_t pos = 0;
-      for (int i = 2; i < line.size(); i++) {
-        if (line[pos] == '\"') {
+      for (int i = 1; i < line.size(); i++) {
+        if (line[i] == '\"') {
           pos = i - 1;
           break;
         }
       }
-      cout << 1 << " " << pos << " " << line.substr(1, pos) << endl;
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Venue;
     }
   }

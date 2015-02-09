@@ -6,8 +6,6 @@
 #include <chrono>
 #include <cmath>
 #include <thread>
-#include <Foundation/Foundation.h>
-#include <Automator/Automator.h>
 
 #define MAX_ID 13860000
 #define MAX_THREAD 40

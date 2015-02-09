@@ -9,6 +9,7 @@
 
 #define MAX_ID 13860000
 #define MAX_THREAD 40
+#define PORTION 0.01
 
 using namespace std;
 
@@ -22,7 +23,6 @@ struct arg{
   vector<vector<uint32_t >> *edgeListPtr;
   size_t mpath_pos;
 };
-
 
 vector<vector<NodeType>> metaPath;
 vector<NodeType> nodeList;
@@ -126,9 +126,10 @@ void worker(struct arg &args) {
   ofstream output;
   output.open(filename.str(), ofstream::trunc);
   ostringstream buf;
+  size_t log_cnt= 0;
   for (size_t i = args.partition; i < nodeList.size(); i += MAX_THREAD) {
     try{
-      if(nodeList[i] == metaPath[args.mpath_pos][0]) {
+      if(nodeList[i] == metaPath[args.mpath_pos][0] && ((double)rand() / (double)RAND_MAX) <= PORTION) {
 //        auto start_time = chrono::high_resolution_clock::now();
         vector<uint32_t> res = bfs_lookup(i, *args.nodeListPtr, *args.edgeListPtr, metaPath[args.mpath_pos]);
 //        if(res.size() > 0){
@@ -140,10 +141,18 @@ void worker(struct arg &args) {
           buf << i << " ";
           for (int j = 0; j < res.size(); ++j) {
             buf << res[j];
-            if(j < res.size() - 1)
+            if(j < res.size() - 1){
               buf << " ";
+            } else {
+              buf << "\n";
+
+            }
           }
-          buf << "\n";
+          log_cnt++;
+          if(log_cnt % 5000) {
+            output << buf.str();
+            buf = ostringstream();
+          }
         }
       }
     } catch (exception& e) {
@@ -161,6 +170,8 @@ void worker(struct arg &args) {
 
 
 int main() {
+
+  srand(900207);
 
   nodeList.resize(MAX_ID);
   edgeList.resize(MAX_ID);
@@ -258,22 +269,23 @@ int main() {
 //  t.join();
 
   for (size_t j = 0; j < metaPath.size(); j++) {
-    start_time = chrono::high_resolution_clock::now();
-    for(size_t i = 0; i < MAX_THREAD; i++) {
-      argList[i].partition = i;
-      argList[i].mpath_pos = j;
-      argList[i].nodeListPtr = &nodeList;
-      argList[i].edgeListPtr = &edgeList;
-      threadList[i] = thread(worker, ref(argList[i]));
+    if(metaPath[j][0] == NodeType::Paper && metaPath[j][metaPath[j].size()-1] == NodeType::Paper){
+      start_time = chrono::high_resolution_clock::now();
+      for(size_t i = 0; i < MAX_THREAD; i++) {
+        argList[i].partition = i;
+        argList[i].mpath_pos = j;
+        argList[i].nodeListPtr = &nodeList;
+        argList[i].edgeListPtr = &edgeList;
+        threadList[i] = thread(worker, ref(argList[i]));
+      }
+
+      for(size_t i = 0; i < MAX_THREAD; i++) {
+        threadList[i].join();
+      }
+
+      duration = chrono::high_resolution_clock::now() - start_time;
+      cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
     }
-
-    for(size_t i = 0; i < MAX_THREAD; i++) {
-      threadList[i].join();
-    }
-
-    duration = chrono::high_resolution_clock::now() - start_time;
-    cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
-
   }
 
 //  for (int j = metaPath.size() - 1; j >=0; --j) {

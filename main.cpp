@@ -11,10 +11,14 @@
 using namespace std;
 
 
-
 enum NodeType {
   Author = 1, Paper = 2, Venue = 3, Term = 4, None = 0
 };
+
+vector<vector<NodeType>> metaPath;
+vector<NodeType> nodeList;
+vector<vector<uint32_t>> edgeList;
+
 
 vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict, vector<vector<uint32_t>> &edgeDict, vector<NodeType> &mPath) {
 
@@ -89,15 +93,16 @@ struct arg {
   size_t end_pos;
   vector<NodeType> *nodeListPtr;
   vector<vector<uint32_t >> *edgeListPtr;
-  vector<NodeType> *mPathPtr;
+  size_t mpath_pos;
 };
 
-void worker(struct arg& args) {
-  for (int i = args.start_pos; i < args.end_pos; ++i) {
+void worker(struct arg &args) {
+  cout <<"aloha"<<endl;
+  for (size_t i = args.start_pos; i < args.end_pos; ++i) {
     try{
-      if(args.nodeListPtr[i] == args.mPathPtr[0]) {
+      if(nodeList[i] == metaPath[args.mpath_pos][0]) {
         auto start_time = chrono::high_resolution_clock::now();
-        vector<uint32_t> res = bfs_lookup(i, *args.nodeListPtr, *args.edgeListPtr, *args.mPathPtr);
+        vector<uint32_t> res = bfs_lookup(i, *args.nodeListPtr, *args.edgeListPtr, metaPath[args.mpath_pos]);
         if(res.size() > 0){
           auto duration = chrono::high_resolution_clock::now() - start_time;
           cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
@@ -110,15 +115,16 @@ void worker(struct arg& args) {
   }
 }
 
+
+
+
 int main() {
+
+  nodeList.resize(MAX_ID);
+  edgeList.resize(MAX_ID);
 
   auto start_time = chrono::high_resolution_clock::now();
 
-  vector<NodeType> nodeList;
-  nodeList.resize(MAX_ID);
-
-  vector<vector<uint32_t>> edgeList;
-  edgeList.resize(MAX_ID);
 
   // Load author id
   {
@@ -201,23 +207,27 @@ int main() {
   cand.push_back(NodeType::Author);
   cand.push_back(NodeType::Venue);
   cout << cand.size() << endl;
-  vector<vector<NodeType>> metaPath = gen_metapath(6, cand);
+  metaPath = gen_metapath(6, cand);
 
   cout << "Generated " << metaPath.size() << " meta paths" << endl;
 
   vector<thread*> threadList;
+  vector<struct arg> argList;
 
-  for (int j = metaPath.size() - 1; j >=0; --j) {
+  cout << "15552 " << nodeList[15552];
+
+  for (size_t j = metaPath.size() - 1; j >=0; --j) {
     cout << "j=" << j <<endl;
     size_t interval = nodeList.size() / 25;
     for(size_t i = 0; i < 25; i++) {
       struct arg args;
       args.start_pos = i * interval;
       args.end_pos = ((i+2) * interval > nodeList.size()) ? nodeList.size() : (i + 1) * interval;
-      args.mPathPtr = &metaPath[j];
+      args.mpath_pos = j;
       args.nodeListPtr = &nodeList;
       args.edgeListPtr = &edgeList;
-      thread t(worker, ref(args));
+      argList.push_back(args);
+      thread t(&worker, ref(argList[argList.size()-1]));
       threadList.push_back(&t);
     }
     for(size_t i = 0; i < 25; i++) {

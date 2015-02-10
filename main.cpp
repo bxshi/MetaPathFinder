@@ -10,7 +10,7 @@
 
 #define MAX_ID 5908600
 #define MAX_THREAD 40
-#define PORTION 0.0001
+#define PORTION 0.00002
 #define NODETYPE_BASE 5
 
 using namespace std;

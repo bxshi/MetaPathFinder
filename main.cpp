@@ -222,6 +222,7 @@ void newWorker(uint16_t pid) {
     }
 
     vector<vector<uint64_t>>().swap(resVec);
+    free(visited);
     cout << pid << " vector released\n";
   }
 }

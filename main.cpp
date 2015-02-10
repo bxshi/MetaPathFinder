@@ -9,7 +9,7 @@
 #include <cstring>
 
 #define MAX_ID 5908600
-#define MAX_THREAD 1
+#define MAX_THREAD 40
 #define PORTION 0.002
 #define NODETYPE_BASE 5
 

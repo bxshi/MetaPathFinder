@@ -238,6 +238,8 @@ int main(int args, char** argv) {
     }
   }
 
+  cout << "paperList.size " << paperList.size() << " min_range " << min_range << " max_range " << max_range << endl;
+
   // Load venue id
   {
     std::ifstream authors("/data/bshi/dblp/venue_id.csv");

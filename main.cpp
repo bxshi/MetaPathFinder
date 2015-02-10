@@ -147,7 +147,7 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
     cout <<"root "<<root<<" src " << src<<" mpath "<<path_to_string(decode(mpath)) <<" depth " << depth <<" pid "<<pid<<endl;
     global_visited[pid][src] = true;
     for (size_t i = 0; i < edgeList[src].size(); ++i) {
-      if (!global_visited[pid][src]){ // not visited
+      if (!global_visited[pid][edgeList[src][i]]){ // not visited
         uint16_t new_mpath = mpath + nodeList[edgeList[src][i]] * pow(NODETYPE_BASE, depth + 1);
         if(nodeList[edgeList[src][i]] == Paper) { // a qualified endpoint, save it
           uint64_t item = (uint64_t(root) << 32) + (edgeList[src][i]);

@@ -190,8 +190,9 @@ void newWorker(uint16_t pid) {
   }
 
   ofstream output;
-  string filename = "./result_pid"+pid;
-  output.open(filename, ofstream::trunc);
+  ostringstream filename;
+  filename << "./result_pid_" << pid;
+  output.open(filename.str(), ofstream::trunc);
   output << oss.str();
   oss.str("");
   oss.clear();

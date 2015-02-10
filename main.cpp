@@ -7,6 +7,7 @@
 #include <cmath>
 #include <thread>
 #include <cstring>
+#include <Foundation/Foundation.h>
 
 #define MAX_ID 5908600
 #define MAX_THREAD 40
@@ -190,10 +191,12 @@ void newWorker(uint16_t pid) {
   }
 
   ofstream output;
-  output.open("./result_pid"+pid, ofstream::trunc);
+  string filename = "./result_pid"+pid;
+  output.open(filename, ofstream::trunc);
   output << oss.str();
   oss.str("");
   oss.clear();
+  output.close();
 
   duration = chrono::high_resolution_clock::now() - start_time;
   cout <<"save pid " << pid << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;

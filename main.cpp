@@ -178,8 +178,10 @@ void newWorker(uint16_t pid) {
     vector<vector<uint64_t >> resVec;
     resVec.resize(1100);
 
+    cout <<"before init\n";
     vector<bool> visited;
     visited.resize(MAX_ID);
+    cout <<"end init\n";
 
     for (size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
       if (nodeList[i] == Paper && ((double) rand() / (double) RAND_MAX) <= PORTION) {

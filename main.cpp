@@ -9,11 +9,14 @@
 #include <cstring>
 
 #define MAX_ID 5908600
-#define MAX_THREAD 40
+#define MAX_THREAD 1
 #define PORTION 1
 #define NODETYPE_BASE 5
 
 using namespace std;
+
+uint8_t max_depth=6;
+uint8_t min_depth=2;
 
 enum NodeType {
   Author = 1, Paper = 2, Venue = 3, Term = 4, None = 0
@@ -31,6 +34,9 @@ vector<NodeType> nodeList;
 vector<vector<uint32_t>> edgeList;
 thread threadList[MAX_THREAD];
 struct arg argList[MAX_THREAD];
+
+vector<vector<vector<uint64_t>>> global_result;
+bool **global_visited;
 
 vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict,
     vector<vector<uint32_t>> &edgeDict, vector<NodeType> &mPath, bool *visited) {
@@ -111,25 +117,7 @@ inline vector<NodeType> decode(uint16_t val) {
   return res;
 }
 
-vector<vector<NodeType>> gen_metapath(uint32_t min_length, uint32_t length, vector<NodeType>& candidates) {
-  vector<vector<NodeType>> mPath;
-  uint cnt = 0;
-  for(size_t path_len = min_length; path_len <= length; path_len++) {
-    for(size_t pos = 0; pos < pow(candidates.size(), path_len); pos++) {
-      size_t val = pos;
-      vector<NodeType> tmpPath;
-      for(size_t j = 0; j < path_len; j++) {
-        tmpPath.push_back(candidates[val % candidates.size()]);
-        val = val / candidates.size();
-      }
-      mPath.push_back(tmpPath);
-      cnt++;
-    }
-  }
-  return mPath;
-}
-
-string path_to_string(vector<NodeType>& nodevec) {
+string path_to_string(vector<NodeType> nodevec) {
   ostringstream ostr;
   for(size_t i = 0; i < nodevec.size(); i++) {
     switch(nodevec[i]) {
@@ -151,6 +139,57 @@ string path_to_string(vector<NodeType>& nodevec) {
   }
   return ostr.str();
 }
+
+
+void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid) {
+  if(depth < max_depth) {
+    // new metapath from root to src
+
+    global_visited[pid][src] = true;
+    for (size_t i = 0; i < edgeList[src].size(); ++i) {
+      if (!global_visited[pid][src]){ // not visited
+        uint16_t new_mpath = mpath + nodeList[edgeList[src][i]] * pow(NODETYPE_BASE, depth + 1);
+        if(nodeList[edgeList[src][i]] == Paper) { // a qualified endpoint, save it
+          uint64_t item = (uint64_t(root) << 32) + (edgeList[src][i]);
+          global_result[pid][new_mpath].push_back(item);
+          cout << "root " << (item >> 32) << " end " << (item << 32) << " path " << path_to_string(decode(mpath)) <<endl;
+        }
+        dfs_lookup(root, edgeList[src][i], new_mpath, depth + 1, pid);
+      }
+    }
+    global_visited[pid][src] = false;
+  }
+}
+
+void newWorker(uint16_t pid) {
+  for(size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
+    if(nodeList[i] == Paper) {
+      auto start_time = chrono::high_resolution_clock::now();
+      dfs_lookup(i, i, nodeList[i], 0, pid);
+      auto duration = chrono::high_resolution_clock::now() - start_time;
+      cout << "Calculate all target for node " << i << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+    }
+  }
+}
+
+vector<vector<NodeType>> gen_metapath(uint32_t min_length, uint32_t length, vector<NodeType>& candidates) {
+  vector<vector<NodeType>> mPath;
+  uint cnt = 0;
+  for(size_t path_len = min_length; path_len <= length; path_len++) {
+    for(size_t pos = 0; pos < pow(candidates.size(), path_len); pos++) {
+      size_t val = pos;
+      vector<NodeType> tmpPath;
+      for(size_t j = 0; j < path_len; j++) {
+        tmpPath.push_back(candidates[val % candidates.size()]);
+        val = val / candidates.size();
+      }
+      mPath.push_back(tmpPath);
+      cnt++;
+    }
+  }
+  return mPath;
+}
+
 
 void worker(struct arg &args) {
 
@@ -232,12 +271,27 @@ bool skip_metapath(vector<NodeType>& mPath) {
   return false;
 }
 
-
 int main(int args, char** argv) {
 
   if(args != 3) {
     cout << "Usage: ./MetaPathFinder metaPathMinLen metaPathMaxLen\n";
     return 233;
+  } else {
+    min_depth = uint8_t(atoi(argv[1]));
+    max_depth = uint8_t(atoi(argv[2]));
+  }
+
+  global_result.resize(MAX_THREAD);
+  for(size_t i = 0; i < MAX_THREAD; i++) {
+    global_result[i].resize(1100);
+    for(size_t j = 0; j < 1100; j++) {
+      global_result[i][j].reserve(1000);
+    }
+  }
+
+  global_visited = (bool **)malloc(sizeof(bool *) * MAX_THREAD);
+  for(size_t i = 0; i < MAX_THREAD; i++) {
+    global_visited[i] = (bool *) malloc(sizeof(bool) * MAX_ID);
   }
 
   srand(900207);
@@ -324,71 +378,39 @@ int main(int args, char** argv) {
   cout << "Node types and edges are loaded, took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
   cout << "edge nodes " << edgeList.size();
 
-  vector<NodeType> cand;
-  cand.push_back(NodeType::Paper);
-  cand.push_back(NodeType::Author);
-  cand.push_back(NodeType::Venue);
-  cout << cand.size() << endl;
-  metaPath = gen_metapath(atoi(argv[1]), atoi(argv[2]), cand);
-
-  cout << "Generated " << metaPath.size() << " meta paths" << endl;
-
-//  vector<NodeType> ttt;
-//  ttt.push_back(NodeType::Paper);
-//  ttt.push_back(NodeType::Paper);
-//
-//  vector<uint32_t> vvv = bfs_lookup(3104898, nodeList, edgeList, ttt);
-//  ostringstream oss;
-//  for(size_t i = 0; i < vvv.size(); i++) {
-//    oss << vvv[i] << " ";
-//  }
-//  oss << endl;
-//  cout << oss.str();
-
-
-//    for(int j = metaPath.size() - 1; j >= 0; j--) {
-  for (size_t j = 0; j < metaPath.size(); j++) {
-    if(!skip_metapath(metaPath[j])){
-//    if(metaPath[j][0] == NodeType::Paper && metaPath[j][metaPath[j].size()-1] == NodeType::Paper){
-      cout << "start computing " << path_to_string(metaPath[j]) << endl;
-      start_time = chrono::high_resolution_clock::now();
-      for(size_t i = 0; i < MAX_THREAD; i++) {
-        argList[i].partition = i;
-        argList[i].mpath_pos = j;
-        argList[i].nodeListPtr = &nodeList;
-        argList[i].edgeListPtr = &edgeList;
-        threadList[i] = thread(worker, ref(argList[i]));
-      }
-
-      for(size_t i = 0; i < MAX_THREAD; i++) {
-        threadList[i].join();
-      }
-
-      duration = chrono::high_resolution_clock::now() - start_time;
-      cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
-    } else {
-      cout << "skip " << path_to_string(metaPath[j]) << endl;
-    }
+  for(size_t i = 0; i < MAX_THREAD; i++) {
+    threadList[i] = thread(newWorker, i);
   }
 
-//  for (int j = metaPath.size() - 1; j >=0; --j) {
-//    cout << "j=" << j <<endl;
-//    for (int i = 0; i < nodeList.size(); ++i) {
-//      try{
-//        if(nodeList[i] == metaPath[j][0]) {
-//          start_time = chrono::high_resolution_clock::now();
-//          vector<uint32_t> res = bfs_lookup(i, nodeList, edgeList, metaPath[j]);
-//          if(res.size() > 0){
-//            duration = chrono::high_resolution_clock::now() - start_time;
-//            cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
-//            cout << "size " << res.size() << endl;
-//          }
-//        }
-//      } catch (exception& e) {
-//
+  for(size_t i = 0; i < MAX_THREAD; i++) {
+    threadList[i].join();
+  }
+
+////    for(int j = metaPath.size() - 1; j >= 0; j--) {
+//  for (size_t j = 0; j < metaPath.size(); j++) {
+//    if(!skip_metapath(metaPath[j])){
+////    if(metaPath[j][0] == NodeType::Paper && metaPath[j][metaPath[j].size()-1] == NodeType::Paper){
+//      cout << "start computing " << path_to_string(metaPath[j]) << endl;
+//      start_time = chrono::high_resolution_clock::now();
+//      for(size_t i = 0; i < MAX_THREAD; i++) {
+//        argList[i].partition = i;
+//        argList[i].mpath_pos = j;
+//        argList[i].nodeListPtr = &nodeList;
+//        argList[i].edgeListPtr = &edgeList;
+//        threadList[i] = thread(worker, ref(argList[i]));
 //      }
+//
+//      for(size_t i = 0; i < MAX_THREAD; i++) {
+//        threadList[i].join();
+//      }
+//
+//      duration = chrono::high_resolution_clock::now() - start_time;
+//      cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+//    } else {
+//      cout << "skip " << path_to_string(metaPath[j]) << endl;
 //    }
 //  }
+
 
   cout << "Hello, World!" << endl;
   return 0;

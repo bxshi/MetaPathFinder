@@ -200,6 +200,9 @@ void newWorker(uint16_t pid) {
 
   duration = chrono::high_resolution_clock::now() - start_time;
   cout <<"save pid " << pid << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+
+  global_result[pid].clear();
+
 }
 
 vector<vector<NodeType>> gen_metapath(uint32_t min_length, uint32_t length, vector<NodeType>& candidates) {

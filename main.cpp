@@ -10,7 +10,7 @@
 
 #define MAX_ID 5908600
 #define MAX_THREAD 40
-#define PORTION 0.00002
+#define PORTION 0.0002
 #define NODETYPE_BASE 5
 
 using namespace std;
@@ -112,8 +112,7 @@ void newWorker(uint16_t pid) {
 
 
     for (size_t i = pid + min_range; i < max_range; i += MAX_THREAD) {
-      if (nodeList[paperList[i]] == Paper) {
-          //&& ((double) rand() / (double) RAND_MAX) <= PORTION) {
+      if (nodeList[paperList[i]] == Paper && ((double) rand() / (double) RAND_MAX) <= PORTION) {
         dfs_lookup(paperList[i], paperList[i], nodeList[paperList[i]], 0, pid, oss);
 
 //      cout << "get " << cnt <<" nodes" <<endl;

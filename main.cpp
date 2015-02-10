@@ -321,14 +321,6 @@ int main(int args, char** argv) {
     max_depth = uint8_t(atoi(argv[2]));
   }
 
-  global_result.resize(MAX_THREAD);
-  for(size_t i = 0; i < MAX_THREAD; i++) {
-    global_result[i].resize(1100);
-    for(size_t j = 0; j < 1100; j++) {
-      global_result[i][j].reserve(1000);
-    }
-  }
-
   global_visited = (bool **)malloc(sizeof(bool *) * MAX_THREAD);
   for(size_t i = 0; i < MAX_THREAD; i++) {
     global_visited[i] = (bool *) malloc(sizeof(bool) * MAX_ID);

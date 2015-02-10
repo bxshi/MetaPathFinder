@@ -7,6 +7,7 @@
 #include <cmath>
 #include <thread>
 #include <cstring>
+#include <Automator/Automator.h>
 
 #define MAX_ID 5908600
 #define MAX_THREAD 40
@@ -108,14 +109,25 @@ void newWorker(uint16_t pid) {
     auto start_time = chrono::high_resolution_clock::now();
     ostringstream oss;
 
+    ofstream output;
+    ostringstream filename;
+    filename << "./result_pid_" << pid;
+    output.open(filename.str(), ofstream::trunc);
+
     // result vector for each thread
 
+    int cnt = 0;
 
     for (size_t i = pid + min_range; i < max_range; i += MAX_THREAD) {
       if (nodeList[paperList[i]] == Paper && ((double) rand() / (double) RAND_MAX) <= PORTION) {
         dfs_lookup(paperList[i], paperList[i], nodeList[paperList[i]], 0, pid, oss);
-
+        cnt++;
 //      cout << "get " << cnt <<" nodes" <<endl;
+      }
+      if (cnt % ((max_range - min_range) / MAX_THREAD / 50) == 0) {
+        output << oss.str();
+        oss.str("");
+        oss.clear();
       }
     }
 
@@ -125,10 +137,7 @@ void newWorker(uint16_t pid) {
     cout << "start saving result to disk" << endl;
     start_time = chrono::high_resolution_clock::now();
 
-    ofstream output;
-    ostringstream filename;
-    filename << "./result_pid_" << pid;
-    output.open(filename.str(), ofstream::trunc);
+
     output << oss.str();
     oss.str("");
     oss.clear();

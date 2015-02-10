@@ -19,7 +19,7 @@ uint8_t min_depth=2;
 
 uint32_t min_range=0;
 uint32_t max_range=0;
-uint32_t portion = 0.0002;
+double portion = 0.0002;
 
 enum NodeType {
   Author = 1, Paper = 2, Venue = 3, Term = 4, None = 0
@@ -229,7 +229,7 @@ int main(int args, char** argv) {
   }
 
   max_range = max_range > paperList.size() ? (uint32_t)paperList.size() : max_range;
-  portion = atoi(argv[5]) / (max_range - min_range);
+  portion = double(atoi(argv[5])) / double(max_range - min_range);
   cout << "paperList.size " << paperList.size() << " min_range " << min_range << " max_range " << max_range << endl;
 
   // Load venue id

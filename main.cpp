@@ -8,9 +8,10 @@
 #include <thread>
 #include <cstring>
 
-#define MAX_ID 13860000
+#define MAX_ID 5908600
 #define MAX_THREAD 40
 #define PORTION 1
+#define NODETYPE_BASE 5
 
 using namespace std;
 
@@ -92,6 +93,24 @@ vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict,
 
 }
 
+inline uint16_t encode(vector<NodeType>& mPath) {
+  uint16_t res = 0;
+  for(size_t i = 0; i < mPath.size(); i++) {
+    res += uint16_t(mPath[i]) * pow(NODETYPE_BASE, i);
+  }
+  return res;
+}
+
+inline vector<NodeType> decode(uint16_t val) {
+  vector<NodeType> res;
+  int tmp = val;
+  while(tmp > 0) {
+    res.push_back(NodeType(tmp % NODETYPE_BASE));
+    tmp /= NODETYPE_BASE;
+  }
+  return res;
+}
+
 vector<vector<NodeType>> gen_metapath(uint32_t min_length, uint32_t length, vector<NodeType>& candidates) {
   vector<vector<NodeType>> mPath;
   uint cnt = 0;
@@ -135,13 +154,12 @@ string path_to_string(vector<NodeType>& nodevec) {
 
 void worker(struct arg &args) {
 
-
   ostringstream filename;
   filename << "./result_";
   filename << path_to_string(metaPath[args.mpath_pos]);
 
   filename << args.partition;
-  cout << args.partition << endl;
+//  cout << args.partition << endl;
 
   ofstream output;
   output.open(filename.str(), ofstream::trunc);

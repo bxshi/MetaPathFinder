@@ -33,10 +33,10 @@ vector<vector<NodeType>> metaPath;
 vector<NodeType> nodeList;
 vector<vector<uint32_t>> edgeList;
 thread threadList[MAX_THREAD];
-struct arg argList[MAX_THREAD];
+//struct arg argList[MAX_THREAD];
 
 //vector<vector<vector<uint64_t>>> global_result;
-bool **global_visited;
+//bool **global_visited;
 
 vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict,
     vector<vector<uint32_t>> &edgeDict, vector<NodeType> &mPath, bool *visited) {
@@ -141,13 +141,13 @@ string path_to_string(vector<NodeType> nodevec) {
 }
 
 
-void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid, vector<vector<uint64_t>>& resVec) {
+void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid, vector<vector<uint64_t>>& resVec, vector<bool>& visited) {
   if(depth < max_depth) {
     // new metapath from root to src
 //    cout <<"root "<<root<<" src " << src<<" mpath "<<path_to_string(decode(mpath)) <<" depth " << depth <<" pid "<<pid<<endl;
-    global_visited[pid][src] = true;
+    visited[src] = true;
     for (size_t i = 0; i < edgeList[src].size(); ++i) {
-      if (!global_visited[pid][edgeList[src][i]]){ // not visited
+      if (!visited[edgeList[src][i]]){ // not visited
         uint16_t new_mpath = mpath + nodeList[edgeList[src][i]] * pow(NODETYPE_BASE, depth + 1);
         if(nodeList[edgeList[src][i]] == Paper) { // a qualified endpoint, save it
           uint64_t item = (uint64_t(root) << 32) + (edgeList[src][i]);
@@ -155,10 +155,10 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
 //          cout << "root " << (item >> 32) << " end " << ((item << 32) >> 32) << " path " << path_to_string(decode(new_mpath)) <<endl;
 //          cout << path_to_string(decode(new_mpath)) << " size " << global_result[pid][new_mpath].size();
         }
-        dfs_lookup(root, edgeList[src][i], new_mpath, depth + 1, pid, resVec);
+        dfs_lookup(root, edgeList[src][i], new_mpath, depth + 1, pid, resVec, visited);
       }
     }
-    global_visited[pid][src] = false;
+    visited[src] = false;
   }
 }
 
@@ -169,13 +169,12 @@ void newWorker(uint16_t pid) {
     // result vector for each thread
     vector<vector<uint64_t >> resVec;
     resVec.resize(1100);
-    for (int k = 0; k < resVec.size(); ++k) {
-      resVec[k].reserve(1000);
-    }
+    vector<bool> visited;
+    visited.resize(MAX_ID, false);
 
     for (size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
       if (nodeList[i] == Paper && ((double) rand() / (double) RAND_MAX) <= PORTION) {
-        dfs_lookup(i, i, nodeList[i], 0, pid, resVec);
+        dfs_lookup(i, i, nodeList[i], 0, pid, resVec, visited);
 
         uint64_t cnt = 0;
         for (size_t j = 0; j < resVec[pid].size(); j++) {
@@ -213,6 +212,8 @@ void newWorker(uint16_t pid) {
     }
 
     vector<vector<uint64_t>>().swap(resVec);
+    vector<bool>().swap(visited);
+    cout << pid << " vector released\n";
   }
 }
 
@@ -323,11 +324,6 @@ int main(int args, char** argv) {
   } else {
     min_depth = uint8_t(atoi(argv[1]));
     max_depth = uint8_t(atoi(argv[2]));
-  }
-
-  global_visited = (bool **)malloc(sizeof(bool *) * MAX_THREAD);
-  for(size_t i = 0; i < MAX_THREAD; i++) {
-    global_visited[i] = (bool *) malloc(sizeof(bool) * MAX_ID);
   }
 
   srand(900207);

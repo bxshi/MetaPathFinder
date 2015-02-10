@@ -142,6 +142,9 @@ string path_to_string(vector<NodeType> nodevec) {
 
 
 void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid, vector<vector<uint64_t>>& resVec, vector<bool>& visited) {
+  if(src >= MAX_ID) {
+    cout << src << ">="<< MAX_ID<<endl;
+  }
   if(depth < max_depth) {
     // new metapath from root to src
 //    cout <<"root "<<root<<" src " << src<<" mpath "<<path_to_string(decode(mpath)) <<" depth " << depth <<" pid "<<pid<<endl;
@@ -212,7 +215,6 @@ void newWorker(uint16_t pid) {
     }
 
     vector<vector<uint64_t>>().swap(resVec);
-    vector<bool>().swap(visited);
     cout << pid << " vector released\n";
   }
 }

@@ -7,7 +7,6 @@
 #include <cmath>
 #include <thread>
 #include <cstring>
-#include <Foundation/Foundation.h>
 
 #define MAX_ID 5908600
 #define MAX_THREAD 40

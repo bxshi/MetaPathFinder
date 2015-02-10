@@ -202,6 +202,7 @@ void newWorker(uint16_t pid) {
   cout <<"save pid " << pid << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
 
   global_result[pid].clear();
+  global_result[pid].shrink_to_fit();
 
 }
 

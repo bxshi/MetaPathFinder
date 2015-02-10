@@ -144,7 +144,7 @@ string path_to_string(vector<NodeType> nodevec) {
 void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid) {
   if(depth < max_depth) {
     // new metapath from root to src
-    cout <<"root "<<root<<" src " << src<<" mpath "<<path_to_string(decode(mpath)) <<" depth " << depth <<" pid "<<pid<<endl;
+//    cout <<"root "<<root<<" src " << src<<" mpath "<<path_to_string(decode(mpath)) <<" depth " << depth <<" pid "<<pid<<endl;
     global_visited[pid][src] = true;
     for (size_t i = 0; i < edgeList[src].size(); ++i) {
       if (!global_visited[pid][edgeList[src][i]]){ // not visited
@@ -152,7 +152,7 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
         if(nodeList[edgeList[src][i]] == Paper) { // a qualified endpoint, save it
           uint64_t item = (uint64_t(root) << 32) + (edgeList[src][i]);
           global_result[pid][new_mpath].push_back(item);
-          cout << "root " << (item >> 32) << " end " << ((item << 32) >> 32) << " path " << path_to_string(decode(new_mpath)) <<endl;
+//          cout << "root " << (item >> 32) << " end " << ((item << 32) >> 32) << " path " << path_to_string(decode(new_mpath)) <<endl;
         }
         dfs_lookup(root, edgeList[src][i], new_mpath, depth + 1, pid);
       }
@@ -164,10 +164,17 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
 void newWorker(uint16_t pid) {
   for(size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
     if(nodeList[i] == Paper) {
-//      auto start_time = chrono::high_resolution_clock::now();
+      auto start_time = chrono::high_resolution_clock::now();
       dfs_lookup(i, i, nodeList[i], 0, pid);
-//      auto duration = chrono::high_resolution_clock::now() - start_time;
-//      cout << "Calculate all targets for node " << i << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+      auto duration = chrono::high_resolution_clock::now() - start_time;
+      cout << "Calculate all targets for node " << i << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+
+      uint64_t cnt = 0;
+      for(size_t j = 0; j < global_result[pid].size(); j++) {
+        cnt += global_result[pid][j].size();
+      }
+      cout << "get " <<cnt<<" nodes" <<endl;
+      break;
     }
   }
 }

@@ -18,6 +18,9 @@ using namespace std;
 uint8_t max_depth=6;
 uint8_t min_depth=2;
 
+uint32_t min_range=0;
+uint32_t max_range=0;
+
 enum NodeType {
   Author = 1, Paper = 2, Venue = 3, Term = 4, None = 0
 };
@@ -31,6 +34,7 @@ struct arg{
 
 vector<vector<NodeType>> metaPath;
 vector<NodeType> nodeList;
+vector<uint32_t > paperList;
 vector<vector<uint32_t>> edgeList;
 thread threadList[MAX_THREAD];
 //struct arg argList[MAX_THREAD];
@@ -173,9 +177,10 @@ void newWorker(uint16_t pid) {
       resVec[k].reserve(1000);
     }
 
-    for (size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
-      if (nodeList[i] == Paper && ((double) rand() / (double) RAND_MAX) <= PORTION) {
-        dfs_lookup(i, i, nodeList[i], 0, pid, resVec);
+    for (size_t i = pid + min_range; i < max_range; i += MAX_THREAD) {
+      if (nodeList[paperList[i]] == Paper) {
+          //&& ((double) rand() / (double) RAND_MAX) <= PORTION) {
+        dfs_lookup(paperList[i], paperList[i], nodeList[paperList[i]], 0, pid, resVec);
 
         uint64_t cnt = 0;
         for (size_t j = 0; j < resVec[pid].size(); j++) {
@@ -318,12 +323,14 @@ bool skip_metapath(vector<NodeType>& mPath) {
 
 int main(int args, char** argv) {
 
-  if(args != 3) {
-    cout << "Usage: ./MetaPathFinder metaPathMinLen metaPathMaxLen\n";
+  if(args != 4) {
+    cout << "Usage: ./MetaPathFinder metaPathMinLen metaPathMaxLen minRange maxRange\n";
     return 233;
   } else {
     min_depth = uint8_t(atoi(argv[1]));
     max_depth = uint8_t(atoi(argv[2]));
+    min_range = atoi(argv[3]);
+    max_range = atoi(argv[4]);
   }
 
   global_visited = (bool **)malloc(sizeof(bool *) * MAX_THREAD);
@@ -369,6 +376,9 @@ int main(int args, char** argv) {
         }
       }
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Paper;
+      paperList.push_back(atoi(line.substr(1, pos).c_str()));
+      //Update max_range
+      max_range = max_range > paperList.size() ? paperList.size() : max_range;
 //      cout << 1 << " " << pos << " " << atoi(line.substr(1, pos).c_str()) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
     }
   }

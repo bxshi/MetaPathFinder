@@ -176,7 +176,6 @@ void newWorker(uint16_t pid) {
         cnt += global_result[pid][j].size();
       }
       cout << "get " << cnt <<" nodes" <<endl;
-      break;
     }
 //  }
 }

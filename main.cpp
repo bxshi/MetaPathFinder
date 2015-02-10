@@ -323,7 +323,7 @@ bool skip_metapath(vector<NodeType>& mPath) {
 
 int main(int args, char** argv) {
 
-  if(args != 4) {
+  if(args != 5) {
     cout << "Usage: ./MetaPathFinder metaPathMinLen metaPathMaxLen minRange maxRange\n";
     return 233;
   } else {

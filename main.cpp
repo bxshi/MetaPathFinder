@@ -114,7 +114,6 @@ void newWorker(uint16_t pid) {
     }
 
     for (size_t i = pid + min_range; i < max_range; i += MAX_THREAD) {
-      cout << bool(nodeList[paperList[i]] == Paper) << endl;
       if (nodeList[paperList[i]] == Paper) {
           //&& ((double) rand() / (double) RAND_MAX) <= PORTION) {
         dfs_lookup(paperList[i], paperList[i], nodeList[paperList[i]], 0, pid, resVec);

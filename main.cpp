@@ -10,7 +10,7 @@
 
 #define MAX_ID 5908600
 #define MAX_THREAD 1
-#define PORTION 1
+#define PORTION 0.002
 #define NODETYPE_BASE 5
 
 using namespace std;
@@ -163,21 +163,40 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
 }
 
 void newWorker(uint16_t pid) {
-//  for(size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
-  size_t i = 3;
-    if(nodeList[i] == Paper) {
-      auto start_time = chrono::high_resolution_clock::now();
+  auto start_time = chrono::high_resolution_clock::now();
+
+  for(size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
+    if(nodeList[i] == Paper && ((double)rand() / (double)RAND_MAX) <= PORTION) {
       dfs_lookup(i, i, nodeList[i], 0, pid);
-      auto duration = chrono::high_resolution_clock::now() - start_time;
-      cout << "Calculate all targets for node " << i << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
 
       uint64_t cnt = 0;
       for(size_t j = 0; j < global_result[pid].size(); j++) {
         cnt += global_result[pid][j].size();
       }
-      cout << "get " << cnt <<" nodes" <<endl;
+//      cout << "get " << cnt <<" nodes" <<endl;
     }
-//  }
+  }
+
+  auto duration = chrono::high_resolution_clock::now() - start_time;
+  cout <<"thread pid " << pid << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+
+  cout << "start saving result to disk" << endl;
+  start_time = chrono::high_resolution_clock::now();
+  ostringstream oss;
+  for(size_t mpath = 0; mpath < 1100; mpath++) {
+      for(size_t pos = 0; pos < global_result[pid][mpath].size(); pos++) {
+        oss << mpath << " " << (global_result[pid][mpath][pos] >> 32) << " " << ((global_result[pid][mpath][pos] << 32) >> 32) << endl;
+      }
+  }
+
+  ofstream output;
+  output.open("./result_pid"+pid, ofstream::trunc);
+  output << oss.str();
+  oss.str("");
+  oss.clear();
+
+  duration = chrono::high_resolution_clock::now() - start_time;
+  cout <<"save pid " << pid << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
 }
 
 vector<vector<NodeType>> gen_metapath(uint32_t min_length, uint32_t length, vector<NodeType>& candidates) {

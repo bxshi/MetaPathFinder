@@ -141,7 +141,7 @@ string path_to_string(vector<NodeType> nodevec) {
 }
 
 
-void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid, vector<vector<uint64_t>>& resVec, vector<bool>& visited) {
+void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid, vector<vector<uint64_t>>& resVec, bool *visited) {
   if(src >= MAX_ID) {
     cout << src << ">="<< MAX_ID<<endl;
   }
@@ -179,8 +179,7 @@ void newWorker(uint16_t pid) {
     resVec.resize(1100);
 
     cout <<"before init\n";
-    vector<bool> visited;
-    visited.resize(MAX_ID);
+    bool *visited = (bool *)malloc(MAX_ID * sizeof(bool));
     cout <<"end init\n";
 
     for (size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {

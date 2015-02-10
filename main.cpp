@@ -172,8 +172,9 @@ void newWorker(uint16_t pid) {
     // result vector for each thread
     vector<vector<uint64_t >> resVec;
     resVec.resize(1100);
+
     vector<bool> visited;
-    visited.resize(MAX_ID, false);
+    visited.resize(MAX_ID);
 
     for (size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
       if (nodeList[i] == Paper && ((double) rand() / (double) RAND_MAX) <= PORTION) {

@@ -163,7 +163,8 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
 }
 
 void newWorker(uint16_t pid) {
-  for(size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
+//  for(size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
+  size_t i = 3;
     if(nodeList[i] == Paper) {
       auto start_time = chrono::high_resolution_clock::now();
       dfs_lookup(i, i, nodeList[i], 0, pid);
@@ -177,7 +178,7 @@ void newWorker(uint16_t pid) {
       cout << "get " << cnt <<" nodes" <<endl;
       break;
     }
-  }
+//  }
 }
 
 vector<vector<NodeType>> gen_metapath(uint32_t min_length, uint32_t length, vector<NodeType>& candidates) {

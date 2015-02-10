@@ -91,7 +91,7 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
         uint16_t new_mpath = mpath + nodeList[edgeList[src][i]] * pow(NODETYPE_BASE, depth + 1);
         if(nodeList[edgeList[src][i]] == Paper) { // a qualified endpoint, save it
 //          uint64_t item = (uint64_t(root) << 32) + (edgeList[src][i]);
-          oss << new_mpath << " " << root << edgeList[src][i] << endl;
+          oss << new_mpath << " " << root << " " << edgeList[src][i] << endl;
 //          resVec[new_mpath].push_back(item);
 //          cout << "root " << (item >> 32) << " end " << ((item << 32) >> 32) << " path " << path_to_string(decode(new_mpath)) <<endl;
 //          cout << path_to_string(decode(new_mpath)) << " size " << global_result[pid][new_mpath].size();

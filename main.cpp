@@ -123,7 +123,7 @@ void newWorker(uint16_t pid) {
         cnt++;
 //      cout << "get " << cnt <<" nodes" <<endl;
       }
-      if (cnt % ((max_range - min_range) / MAX_THREAD / 50) == 0) {
+      if (cnt % 2 == 0) {
         output << oss.str();
         oss.str("");
         oss.clear();

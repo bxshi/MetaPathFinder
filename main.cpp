@@ -37,71 +37,8 @@ vector<NodeType> nodeList;
 vector<uint32_t > paperList;
 vector<vector<uint32_t>> edgeList;
 thread threadList[MAX_THREAD];
-//struct arg argList[MAX_THREAD];
 
-//vector<vector<vector<uint64_t>>> global_result;
 bool **global_visited;
-
-vector<uint32_t> bfs_lookup(uint32_t src, vector<NodeType> &nodeDict,
-    vector<vector<uint32_t>> &edgeDict, vector<NodeType> &mPath, bool *visited) {
-  vector<uint32_t> frontier;
-
-  memset(visited, false, sizeof(bool) * MAX_ID);
-
-  for (size_t i = 0; i < mPath.size() - 1; i++) {
-    NodeType currentType = mPath.at(i);
-    NodeType nextType = mPath.at(i + 1);
-
-
-    if (i == 0) { // Set frontier to all nodes that connect to src without type filtering
-      if (nodeDict.at(src) != currentType) {
-        return frontier;
-      }
-      frontier.push_back(src);
-      visited[src] = true;
-//      cout << "i = 0 " << frontier.size() << " fronter " << frontier[0] << endl;
-    }
-
-    if(frontier.size() == 0) { // early terminate if there is no nodes to visit
-      return frontier;
-    }
-
-    // Set frontier to visited
-//    for (size_t j = 0; j < frontier.size(); j++) {
-//      visited[frontier.at(j)] = true;
-////      cout << "visited " << frontier.at(j) << " is " << visited[frontier.at(j)] << endl;
-//    }
-
-    // Get new frontier
-    vector<uint32_t> newFrontier;
-    for (size_t j = 0; j < frontier.size(); j++) {
-//        cout << j << " ";
-//        cout << frontier.at(j) << " ";
-//        cout << edgeDict.at(frontier.at(j)).size() << endl;
-      try{
-        vector<uint32_t> &tmpList = edgeDict.at(frontier.at(j));
-        for (size_t z = 0; z < tmpList.size(); z++) { // for each element in next node
-//          cout << "ind " << z << " candidate " << tmpList.at(z) << " cond1 " << bool(nodeDict.at(tmpList.at(z)) == nextType) << " cond2 " << bool(!visited.at(tmpList.at(z))) << endl;
-          if (nodeDict.at(tmpList.at(z)) == nextType && // type meet
-              !visited[tmpList[z]]) { // never visited
-            newFrontier.push_back(tmpList.at(z));
-            visited[tmpList.at(z)] = true; // set as visited to avoid duplicate dest
-          }
-        }
-      } catch(const exception& e) {
-        cout << e.what() << endl;
-      }
-
-    }
-    frontier = newFrontier;
-//    for (int k = 0; k < frontier.size(); ++k) {
-//      cout << "new frontier " << k << " " << frontier[k] << endl;
-//    }
-  }
-
-  return frontier;
-
-}
 
 inline uint16_t encode(vector<NodeType>& mPath) {
   uint16_t res = 0;
@@ -143,7 +80,6 @@ string path_to_string(vector<NodeType> nodevec) {
   }
   return ostr.str();
 }
-
 
 void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid, vector<vector<uint64_t>>& resVec) {
   if(depth < max_depth) {
@@ -238,87 +174,6 @@ vector<vector<NodeType>> gen_metapath(uint32_t min_length, uint32_t length, vect
     }
   }
   return mPath;
-}
-
-
-void worker(struct arg &args) {
-
-  ostringstream filename;
-  filename << "./result_";
-  filename << path_to_string(metaPath[args.mpath_pos]);
-
-  filename << args.partition;
-//  cout << args.partition << endl;
-
-  ofstream output;
-  output.open(filename.str(), ofstream::trunc);
-  ostringstream buf;
-  size_t log_cnt= 0;
-
-
-  bool *is_visited = (bool *)malloc(MAX_ID * sizeof(bool));
-  memset(is_visited, false, sizeof(bool) * MAX_ID);
-  for (size_t i = args.partition; i < nodeList.size(); i += MAX_THREAD) {
-    try{
-      if(nodeList[i] == metaPath[args.mpath_pos][0] && ((double)rand() / (double)RAND_MAX) <= PORTION) {
-//        auto start_time = chrono::high_resolution_clock::now();
-        vector<uint32_t> res = bfs_lookup(i, *args.nodeListPtr, *args.edgeListPtr, metaPath[args.mpath_pos], is_visited);
-//        if(res.size() > 0){
-//          auto duration = chrono::high_resolution_clock::now() - start_time;
-//          cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
-//          cout << "size " << res.size() << endl;
-//        }
-        if(res.size() > 0) {
-          buf << i << " ";
-          for (int j = 0; j < res.size(); ++j) {
-            buf << res[j];
-            if(j < res.size() - 1){
-              buf << " ";
-            } else {
-              buf << "\n";
-
-            }
-          }
-          log_cnt++;
-          if(log_cnt % 5000 == 0) {
-            output << buf.str();
-            buf.str("");
-            buf.clear();
-          }
-        }
-      }
-    } catch (exception& e) {
-
-    }
-  }
-
-  output << buf.str();
-  buf.str("");
-  buf.clear();
-  output.close();
-
-}
-
-bool skip_metapath(vector<NodeType>& mPath) {
-
-  if(mPath[0] != Paper || mPath[mPath.size()-1] != Paper) {
-    return true;
-  }
-
-  for(size_t i = 0; i < mPath.size() - 1; i++) {
-    if (mPath[i] == Author) {
-      if ((mPath[i+1] == Author) || mPath[i+1] == Venue) {
-        return true;
-      }
-    }
-    if (mPath[i] == Venue) {
-      if ((mPath[i+1] == Venue) || (mPath[i+1] == Author)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
 }
 
 int main(int args, char** argv) {
@@ -433,32 +288,5 @@ int main(int args, char** argv) {
     threadList[i].join();
   }
 
-////    for(int j = metaPath.size() - 1; j >= 0; j--) {
-//  for (size_t j = 0; j < metaPath.size(); j++) {
-//    if(!skip_metapath(metaPath[j])){
-////    if(metaPath[j][0] == NodeType::Paper && metaPath[j][metaPath[j].size()-1] == NodeType::Paper){
-//      cout << "start computing " << path_to_string(metaPath[j]) << endl;
-//      start_time = chrono::high_resolution_clock::now();
-//      for(size_t i = 0; i < MAX_THREAD; i++) {
-//        argList[i].partition = i;
-//        argList[i].mpath_pos = j;
-//        argList[i].nodeListPtr = &nodeList;
-//        argList[i].edgeListPtr = &edgeList;
-//        threadList[i] = thread(worker, ref(argList[i]));
-//      }
-//
-//      for(size_t i = 0; i < MAX_THREAD; i++) {
-//        threadList[i].join();
-//      }
-//
-//      duration = chrono::high_resolution_clock::now() - start_time;
-//      cout << "calculation took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
-//    } else {
-//      cout << "skip " << path_to_string(metaPath[j]) << endl;
-//    }
-//  }
-
-
-  cout << "Hello, World!" << endl;
   return 0;
 }

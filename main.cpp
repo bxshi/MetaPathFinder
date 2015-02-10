@@ -208,7 +208,11 @@ void newWorker(uint16_t pid) {
 
     duration = chrono::high_resolution_clock::now() - start_time;
     cout << "save pid " << pid << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
-    free(global_visited[pid]);
+    for (int s = 0; s < resVec.size(); ++s) {
+      vector<uint64_t >().swap(resVec[s]);
+    }
+
+    vector<vector<uint64_t>>().swap(resVec);
   }
 }
 

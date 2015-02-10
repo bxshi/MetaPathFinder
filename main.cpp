@@ -164,10 +164,10 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
 void newWorker(uint16_t pid) {
   for(size_t i = pid; i < nodeList.size(); i += MAX_THREAD) {
     if(nodeList[i] == Paper) {
-      auto start_time = chrono::high_resolution_clock::now();
+//      auto start_time = chrono::high_resolution_clock::now();
       dfs_lookup(i, i, nodeList[i], 0, pid);
-      auto duration = chrono::high_resolution_clock::now() - start_time;
-      cout << "Calculate all target for node " << i << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+//      auto duration = chrono::high_resolution_clock::now() - start_time;
+//      cout << "Calculate all targets for node " << i << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
     }
   }
 }

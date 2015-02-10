@@ -145,24 +145,29 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
   if(src >= MAX_ID) {
     cout << src << ">="<< MAX_ID<<endl;
   }
-  if(depth < max_depth) {
-    // new metapath from root to src
+  try{
+    if(depth < max_depth) {
+      // new metapath from root to src
 //    cout <<"root "<<root<<" src " << src<<" mpath "<<path_to_string(decode(mpath)) <<" depth " << depth <<" pid "<<pid<<endl;
-    visited[src] = true;
-    for (size_t i = 0; i < edgeList[src].size(); ++i) {
-      if (!visited[edgeList[src][i]]){ // not visited
-        uint16_t new_mpath = mpath + nodeList[edgeList[src][i]] * pow(NODETYPE_BASE, depth + 1);
-        if(nodeList[edgeList[src][i]] == Paper) { // a qualified endpoint, save it
-          uint64_t item = (uint64_t(root) << 32) + (edgeList[src][i]);
-          resVec[new_mpath].push_back(item);
+      visited[src] = true;
+      for (size_t i = 0; i < edgeList[src].size(); ++i) {
+        if (!visited[edgeList[src][i]]){ // not visited
+          uint16_t new_mpath = mpath + nodeList[edgeList[src][i]] * pow(NODETYPE_BASE, depth + 1);
+          if(nodeList[edgeList[src][i]] == Paper) { // a qualified endpoint, save it
+            uint64_t item = (uint64_t(root) << 32) + (edgeList[src][i]);
+            resVec[new_mpath].push_back(item);
 //          cout << "root " << (item >> 32) << " end " << ((item << 32) >> 32) << " path " << path_to_string(decode(new_mpath)) <<endl;
 //          cout << path_to_string(decode(new_mpath)) << " size " << global_result[pid][new_mpath].size();
+          }
+          dfs_lookup(root, edgeList[src][i], new_mpath, depth + 1, pid, resVec, visited);
         }
-        dfs_lookup(root, edgeList[src][i], new_mpath, depth + 1, pid, resVec, visited);
       }
+      visited[src] = false;
     }
-    visited[src] = false;
+  }catch (exception &e) {
+    cout <<e.what()<<endl;
   }
+
 }
 
 void newWorker(uint16_t pid) {

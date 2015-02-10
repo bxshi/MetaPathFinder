@@ -81,7 +81,7 @@ string path_to_string(vector<NodeType> nodevec) {
   return ostr.str();
 }
 
-void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid, vector<vector<uint64_t>>& resVec) {
+void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid, ostringstream& oss) {
   if(depth < max_depth) {
     // new metapath from root to src
 //    cout <<"root "<<root<<" src " << src<<" mpath "<<path_to_string(decode(mpath)) <<" depth " << depth <<" pid "<<pid<<endl;
@@ -90,12 +90,13 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
       if (!global_visited[pid][edgeList[src][i]]){ // not visited
         uint16_t new_mpath = mpath + nodeList[edgeList[src][i]] * pow(NODETYPE_BASE, depth + 1);
         if(nodeList[edgeList[src][i]] == Paper) { // a qualified endpoint, save it
-          uint64_t item = (uint64_t(root) << 32) + (edgeList[src][i]);
-          resVec[new_mpath].push_back(item);
+//          uint64_t item = (uint64_t(root) << 32) + (edgeList[src][i]);
+          oss << new_mpath << " " << root << edgeList[src][i] << endl;
+//          resVec[new_mpath].push_back(item);
 //          cout << "root " << (item >> 32) << " end " << ((item << 32) >> 32) << " path " << path_to_string(decode(new_mpath)) <<endl;
 //          cout << path_to_string(decode(new_mpath)) << " size " << global_result[pid][new_mpath].size();
         }
-        dfs_lookup(root, edgeList[src][i], new_mpath, depth + 1, pid, resVec);
+        dfs_lookup(root, edgeList[src][i], new_mpath, depth + 1, pid, oss);
       }
     }
     global_visited[pid][src] = false;
@@ -105,23 +106,16 @@ void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint
 void newWorker(uint16_t pid) {
   {
     auto start_time = chrono::high_resolution_clock::now();
+    ostringstream oss;
 
     // result vector for each thread
-    vector<vector<uint64_t >> resVec;
-    resVec.resize(1100);
-    for (int k = 0; k < resVec.size(); ++k) {
-      resVec[k].reserve(1000);
-    }
+
 
     for (size_t i = pid + min_range; i < max_range; i += MAX_THREAD) {
       if (nodeList[paperList[i]] == Paper) {
           //&& ((double) rand() / (double) RAND_MAX) <= PORTION) {
-        dfs_lookup(paperList[i], paperList[i], nodeList[paperList[i]], 0, pid, resVec);
+        dfs_lookup(paperList[i], paperList[i], nodeList[paperList[i]], 0, pid, oss);
 
-        uint64_t cnt = 0;
-        for (size_t j = 0; j < resVec[pid].size(); j++) {
-          cnt += resVec[j].size();
-        }
 //      cout << "get " << cnt <<" nodes" <<endl;
       }
     }
@@ -131,12 +125,6 @@ void newWorker(uint16_t pid) {
 
     cout << "start saving result to disk" << endl;
     start_time = chrono::high_resolution_clock::now();
-    ostringstream oss;
-    for (size_t mpath = 0; mpath < 1100; mpath++) {
-      for (size_t pos = 0; pos < resVec[mpath].size(); pos++) {
-        oss << mpath << " " << (resVec[mpath][pos] >> 32) << " " << ((resVec[mpath][pos] << 32) >> 32) << endl;
-      }
-    }
 
     ofstream output;
     ostringstream filename;
@@ -150,11 +138,7 @@ void newWorker(uint16_t pid) {
     duration = chrono::high_resolution_clock::now() - start_time;
     cout << "save pid " << pid << " took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
     free(global_visited[pid]);
-    for (int s = 0; s < resVec.size(); ++s) {
-      vector<uint64_t >().swap(resVec[s]);
-    }
 
-    vector<vector<uint64_t>>().swap(resVec);
   }
 }
 

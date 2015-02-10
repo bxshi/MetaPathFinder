@@ -114,6 +114,7 @@ void newWorker(uint16_t pid) {
     }
 
     for (size_t i = pid + min_range; i < max_range; i += MAX_THREAD) {
+      cout << bool(nodeList[paperList[i]] == Paper) << endl;
       if (nodeList[paperList[i]] == Paper) {
           //&& ((double) rand() / (double) RAND_MAX) <= PORTION) {
         dfs_lookup(paperList[i], paperList[i], nodeList[paperList[i]], 0, pid, resVec);
@@ -233,11 +234,11 @@ int main(int args, char** argv) {
       nodeList[atoi(line.substr(1, pos).c_str())] = NodeType::Paper;
       paperList.push_back(atoi(line.substr(1, pos).c_str()));
       //Update max_range
-      max_range = max_range > paperList.size() ? paperList.size() : max_range;
 //      cout << 1 << " " << pos << " " << atoi(line.substr(1, pos).c_str()) << " " << nodeList[atoi(line.substr(1, pos).c_str())] << endl;
     }
   }
 
+  max_range = max_range > paperList.size() ? (uint32_t)paperList.size() : max_range;
   cout << "paperList.size " << paperList.size() << " min_range " << min_range << " max_range " << max_range << endl;
 
   // Load venue id

@@ -1,16 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <ostream>
-#include <sstream>
-#include <vector>
-#include <chrono>
-#include <cmath>
-#include <thread>
-#include <cstring>
-
-#define MAX_ID 5908600
-#define MAX_THREAD 40
-#define NODETYPE_BASE 5
+#include "mpf.h"
 
 using namespace std;
 
@@ -21,9 +9,6 @@ uint32_t min_range=0;
 uint32_t max_range=0;
 double portion = 0.0002;
 
-enum NodeType {
-  Author = 1, Paper = 2, Venue = 3, Term = 4, None = 0
-};
 
 struct arg{
   size_t partition;
@@ -39,47 +24,6 @@ vector<vector<uint32_t>> edgeList;
 thread threadList[MAX_THREAD];
 
 bool **global_visited;
-
-inline uint16_t encode(vector<NodeType>& mPath) {
-  uint16_t res = 0;
-  for(size_t i = 0; i < mPath.size(); i++) {
-    res += uint16_t(mPath[i]) * pow(NODETYPE_BASE, i);
-  }
-  return res;
-}
-
-inline vector<NodeType> decode(uint16_t val) {
-  vector<NodeType> res;
-  int tmp = val;
-  while(tmp > 0) {
-    res.push_back(NodeType(tmp % NODETYPE_BASE));
-    tmp /= NODETYPE_BASE;
-  }
-  return res;
-}
-
-string path_to_string(vector<NodeType> nodevec) {
-  ostringstream ostr;
-  for(size_t i = 0; i < nodevec.size(); i++) {
-    switch(nodevec[i]) {
-      case NodeType::None:
-        ostr << "None_";
-        break;
-      case NodeType::Author:
-        ostr << "Author_";
-        break;
-      case NodeType::Paper:
-        ostr << "Paper_";
-        break;
-      case NodeType::Venue:
-        ostr << "Venue_";
-        break;
-      case NodeType::Term:
-        ostr << "Term_";
-    }
-  }
-  return ostr.str();
-}
 
 void dfs_lookup(uint32_t root, uint32_t src, uint16_t mpath, uint8_t depth, uint16_t pid, ostringstream& oss) {
   if(depth < max_depth) {

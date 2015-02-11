@@ -18,7 +18,7 @@
 #define MAX_ID 5908600
 #define MAX_THREAD 40
 #define NODETYPE_BASE 5
-#define MAX_DOC_ID 4348082
+#define MAX_DOC_ID 4373900
 
 using namespace std;
 

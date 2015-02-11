@@ -100,6 +100,7 @@ int main(int argc, char** argv) {
     uint32_t key = 0;
     for(size_t i = 0; i < line.size(); i++) { // last element is always comma
       if (line[pos] == ',') {
+        cout << "pos " << pos << "i " << i << " substr " << line.substr(pos, i);
         uint32_t val = atoi(line.substr(pos, i).c_str());
         if(pos == 0) {
           key = val;

@@ -88,6 +88,8 @@ double cosine_sim(vector<uint32_t>& a, vector<uint32_t>& b) {
 
 int main(int argc, char** argv) {
 
+  auto start_time = chrono::high_resolution_clock::now();
+
   std::ifstream input(argv[1]);
 
   // Read words
@@ -100,7 +102,7 @@ int main(int argc, char** argv) {
     uint32_t key = 0;
     for(size_t i = 0; i < line.size(); i++) { // last element is always comma
       if (line[i] == ',') {
-        cout << "pos " << pos << "i " << i << " substr " << line.substr(pos, i);
+//        cout << "pos " << pos << "i " << i << " substr " << line.substr(pos, i);
         uint32_t val = atoi(line.substr(pos, i).c_str());
         if(pos == 0) {
           key = val;
@@ -112,14 +114,17 @@ int main(int argc, char** argv) {
     }
     termList[key].shrink_to_fit();
 
-    cout << "key is " << key;
-    for (int j = 0; j < termList[key].size(); ++j) {
-      cout << " " << termList[key][j] <<" ";
-    }
-
-    cout << endl;
-    break;
+//    cout << "key is " << key;
+//    for (int j = 0; j < termList[key].size(); ++j) {
+//      cout << " " << termList[key][j] <<" ";
+//    }
+//
+//    cout << endl;
   }
+
+  auto duration = chrono::high_resolution_clock::now() - start_time;
+  cout << "Terms are loaded, took " << chrono::duration_cast<chrono::microseconds>(duration).count() << endl;
+  cout << "#paper: " << termList.size() << endl;
 
   return 0;
 }

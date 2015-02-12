@@ -1,3 +1,4 @@
+#include <AddressBook/AddressBook.h>
 #include "mpf.h"
 
 vector<vector<uint32_t>> termList;
@@ -125,7 +126,9 @@ int main(int argc, char** argv) {
   cout << "Largest term id: " << max_term_id << endl;
 
   ostringstream oss;
-  ofstream bm25_output;
+  ofstream output;
+  output.open(argv[3], ofstream::trunc);
+  uint64_t cnt = 0;
 
   // Read endpoint pairs
   ifstream edge_input(argv[2]);
@@ -137,8 +140,16 @@ int main(int argc, char** argv) {
 
     is >> mpathType >> src >> target;
     cout << mpathType << "  " << src << "  " << target << endl;
-    break;
 
+    // Calculate cosine similarity
+    double score = cosine_sim(termList[src], termList[target]);
+    oss << mpathType << "," << score << endl;
+    cnt++;
+    if (cnt % 5000 == 0) {
+      output << oss.str();
+      oss.str("");
+      oss.clear();
+    }
   }
 
   return 0;

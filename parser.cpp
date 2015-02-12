@@ -138,7 +138,6 @@ int main(int argc, char** argv) {
     uint32_t target;
 
     is >> mpathType >> src >> target;
-    cout << mpathType << "  " << src << "  " << target << endl;
 
     // Calculate cosine similarity
     double score = cosine_sim(termList[src], termList[target]);

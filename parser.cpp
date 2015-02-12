@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
   cout << "Largest term id: " << max_term_id << endl;
 
   ostringstream oss;
-  ostream bm25_output(argv[3]);
+  ostream bm25_output;
 
   // Read endpoint pairs
   ifstream edge_input(argv[2]);

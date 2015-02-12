@@ -1,4 +1,3 @@
-#include <tclDecls.h>
 #include "mpf.h"
 
 vector<vector<uint32_t>> termList;

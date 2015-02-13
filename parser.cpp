@@ -19,14 +19,15 @@ double cosine_sim(vector<tuple<uint32_t, uint16_t>>& a, vector<tuple<uint32_t, u
 
   while(i < a.size() && j < b.size()) {
     if (get<0>(a[i]) < get<0>(b[j])) {
-      asquare += pow(get<0>(a[i]), 2);
+      asquare += pow(get<1>(a[i]), 2);
       i++;
     } else if (get<0>(a[i]) > get<0>(b[j])) {
-      bsquare += pow(get<0>(b[j]),2);
+      bsquare += pow(get<1>(b[j]),2);
       j++;
     } else {
-      res += get<0>(a[i]) * get<0>(b[j]);
-      asquare += pow(get<0>(a[i]),2) + pow(get<0>(b[j]),2);
+      res += get<1>(a[i]) * get<1>(b[j]);
+      asquare += pow(get<1>(a[i]),2);
+      bsquare += pow(get<1>(b[j]),2);
       i++;
       j++;
     }
@@ -34,12 +35,12 @@ double cosine_sim(vector<tuple<uint32_t, uint16_t>>& a, vector<tuple<uint32_t, u
 
   if(i < a.size()) {
     for(;i < a.size(); i++) {
-      asquare += pow(get<0>(a[i]),2);
+      asquare += pow(get<1>(a[i]),2);
     }
   }
   if(j < b.size()) {
     for(; j < b.size(); j++) {
-      bsquare += pow(get<0>(b[j]),2);
+      bsquare += pow(get<1>(b[j]),2);
     }
   }
 
@@ -57,14 +58,15 @@ double cosine_sim(vector<uint32_t>& a, vector<uint32_t>& b) {
 
   while(i < a.size() && j < b.size()) {
     if (a[i] < (b[j])) {
-      asquare += pow((a[i]), 2);
+      asquare += pow(1, 2);
       i++;
     } else if ((a[i]) > (b[j])) {
-      bsquare += pow((b[j]),2);
+      bsquare += pow(1,2);
       j++;
     } else {
-      res += (a[i]) * (b[j]);
-      asquare += pow((a[i]),2) + pow((b[j]),2);
+      res += (1) * (1);
+      asquare += pow(1,2);
+      bsquare += pow(1,2);
       i++;
       j++;
     }
@@ -72,16 +74,18 @@ double cosine_sim(vector<uint32_t>& a, vector<uint32_t>& b) {
 
   if(i < a.size()) {
     for(;i < a.size(); i++) {
-      asquare += pow((a[i]),2);
+      asquare += pow(1,2);
     }
   }
   if(j < b.size()) {
     for(; j < b.size(); j++) {
-      bsquare += pow((b[j]),2);
+      bsquare += pow(1,2);
     }
   }
 
-  return res / (sqrt(asquare) * sqrt(bsquare));
+  res = res / (sqrt(asquare) * sqrt(bsquare));
+  assert(res <= 1.0);
+  return res;
 
 }
 

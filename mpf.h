@@ -14,6 +14,7 @@
 #include <cmath>
 #include <thread>
 #include <cstring>
+#include <cassert>
 
 #define MAX_ID 5908600
 #define MAX_THREAD 40

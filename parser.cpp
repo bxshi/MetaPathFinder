@@ -44,8 +44,9 @@ double cosine_sim(vector<tuple<uint32_t, uint16_t>>& a, vector<tuple<uint32_t, u
     }
   }
 
-  return res / (sqrt(asquare) * sqrt(bsquare));
-
+  res = res / (sqrt(asquare) * sqrt(bsquare));
+  assert(res <= 1.0);
+  return res;
 }
 
 double cosine_sim(vector<uint32_t>& a, vector<uint32_t>& b) {

@@ -2,6 +2,8 @@
 
 vector<vector<uint32_t>> termList;
 
+vector<double> idf;
+
 /**
 * Function for tuple comparison
 */
@@ -90,6 +92,17 @@ double cosine_sim(vector<uint32_t>& a, vector<uint32_t>& b) {
 
 }
 
+void inverse_document_freq(uint32_t& max_term_id) {
+  idf.resize(max_term_id + 1);
+  for (size_t i = 0; i < termList.size(); ++i) {
+    for (size_t j = 0; j < termList[i].size(); ++j) {
+      idf[termList[i][j]]++;
+    }
+  }
+  for(size_t i = 0; i < idf.size(); i++) {
+    idf[i] = log((termList.size() - idf[i] + 0.5)/(idf[i]+0.50001));
+  }
+}
 
 int main(int argc, char** argv) {
 
@@ -146,7 +159,8 @@ int main(int argc, char** argv) {
 
     // Calculate cosine similarity
     double score = cosine_sim(termList[src], termList[target]);
-    oss << mpathType << "," << score << endl;
+    oss << src << "," << target << "," << score << endl;
+//    oss << mpathType << "," << score << endl;
     cnt++;
     if (cnt % 5000 == 0) {
       output << oss.str();
